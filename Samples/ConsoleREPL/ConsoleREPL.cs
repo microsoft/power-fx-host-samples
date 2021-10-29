@@ -17,13 +17,13 @@ namespace PowerFxHostSamples
             var engine = new RecalcEngine();
 
             Console.Write("Microsoft Power Fx Console Formula REPL, Version 0.2\n");
-            Console.Write("Commands: //help and //exit\n\n");
+            Console.Write("Commands: //help and //exit\n");
             
             // loop
             while (true)
             {
                 // read
-                Console.Write("> ");
+                Console.Write("\n> ");
                 var expr = Console.ReadLine();
 
                 try
@@ -34,20 +34,16 @@ namespace PowerFxHostSamples
                     if ((match = Regex.Match(expr, @"^\s*Set\(\s*(?<ident>\w+)\s*,\s*(?<expr>.*)\)\s*$")).Success)
                     {
                         var r = engine.Eval(match.Groups["expr"].Value);
+                        Console.WriteLine(match.Groups["ident"].Value + ": " + PrintResult(r));
                         engine.UpdateVariable(match.Groups["ident"].Value, r);
-                        expr = match.Groups["ident"].Value;
                     }
 
                     // formula definition: <ident> = <formula>
                     else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$")).Success)
-                    {
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
-                        // recalc will automatically print the value for the formula through OnUpdate
-                        continue;
-                    }
 
                     // exit
-                    else if( Regex.IsMatch( expr, @"\s*//\s*exit\s*$", RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(expr, @"\s*//\s*exit\s*$", RegexOptions.IgnoreCase))
                         return;
 
                     // help, includes list of all functions
@@ -65,26 +61,19 @@ namespace PowerFxHostSamples
                                 Console.WriteLine();
                         }
                         Console.WriteLine("  Set\n");
-                        Console.WriteLine("Available operators: = <> <= >= + - * / % in exactin && And || Or ! Not \n");
-                        continue;
+                        Console.WriteLine("Available operators: = <> <= >= + - * / % in exactin && And || Or ! Not");
                     }
 
-                    // single line comment, nothing to do
-                    else if (Regex.IsMatch(expr, @"^\s*//"))
-                        continue;
+                    // eval and print everything else, unless empty lines and single line comment (which do nothing)
+                    else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"\w"))
+                    {
+                        var result = engine.Eval(expr);
 
-                    // empty input line, nothing to do
-                    else if (!Regex.IsMatch(expr, @"\w"))
-                        continue;
-
-                    // eval
-                    var result = engine.Eval(expr);
-
-                    // print
-                    if (result is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
-                        throw new Exception(errorValue.Errors[0].Message);
-                    else
-                        Console.Write( PrintResult(result) + "\n" );
+                        if (result is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+                            throw new Exception(errorValue.Errors[0].Message);
+                        else
+                            Console.WriteLine(PrintResult(result));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -98,7 +87,14 @@ namespace PowerFxHostSamples
         static void OnUpdate(string name, Microsoft.PowerFx.Core.Public.Values.FormulaValue newValue)
         {
             Console.Write($"{name}: ");
-            Console.Write( PrintResult(newValue) + "\n" );
+            if( newValue is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(errorValue.Errors[0].Message);
+                Console.ResetColor();
+            }
+            else
+                Console.WriteLine( PrintResult(newValue) );
         }
 
         static string PrintResult(object value)
