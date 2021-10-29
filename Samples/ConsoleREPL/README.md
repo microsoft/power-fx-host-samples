@@ -83,5 +83,6 @@ Input lines are categorized and processed:
 - `Set( <identifier>, <expression> )` defines or updates a variable.  It evaluates the expression with `engine.Eval` and then passes the result to `engine.UpdateVariable`.
 - `<identifier> = <expression>` defines a formula.  It is passed to `engine.SetFormula` directly.  The helper function `OnUpdate` is called if the value changes due to a dependency in *expression* changing.
 - `<expression>` evaluates an expression.  It is passed to `engine.Eval` directly.  The helper function `PrintResult` recursively creates a string representation for the result.  Since the Boolean returing expression `x = y` conflicts with a formula definition, it needs to be wrapped in parens as `(x = y)`
-- `//help` prints some helpful notes and calls `engine.GetAllFunctions` for the list of available functions (always growing and can be augmented by the host).
-- `//reset` creates a new engine `RecalcEngine` instance.
+- `Help()` is a custom host function that is added in with `engine.AddFunction`.  It prints some helpful notes and calls `engine.GetAllFunctions` for the list of available functions (always growing and can be augmented by the host).
+- `Reset()` is another custom host function that creates a new engine `RecalcEngine` instance.  All variable and formula definitions are lost.
+- `Exit()` is another custom host function that closes the console application.

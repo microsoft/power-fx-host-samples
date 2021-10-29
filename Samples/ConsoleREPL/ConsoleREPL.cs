@@ -7,17 +7,29 @@
 using System;
 using System.Text.RegularExpressions;
 using Microsoft.PowerFx;
+using Microsoft.PowerFx.Core.Public.Values;
+using Microsoft.PowerFx.Core.Public.Types;
 
 namespace PowerFxHostSamples
 {
     class ConsoleRepl
     {
+        private static RecalcEngine engine;
+
+        static void ResetEngine()
+        {
+            engine = new RecalcEngine();
+            engine.AddFunction(new HelpFunction());
+            engine.AddFunction(new ResetFunction());
+            engine.AddFunction(new ExitFunction());
+        }
+
         public static void Main()
         {
-            var engine = new RecalcEngine();
+            ResetEngine();
 
-            Console.Write("Microsoft Power Fx Console Formula REPL, Version 0.2\n");
-            Console.Write("Commands: //help, //reset, and //exit\n");
+            Console.WriteLine("Microsoft Power Fx Console Formula REPL, Version 0.2");
+            Console.WriteLine("Enter Excel formulas.  Use \"Help()\" for details.");
             
             // loop
             while (true)
@@ -42,43 +54,6 @@ namespace PowerFxHostSamples
                     else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$")).Success)
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
 
-                    // exit
-                    else if (Regex.IsMatch(expr, @"\s*//\s*exit\s*$", RegexOptions.IgnoreCase))
-                        return;
-
-                    // reset
-                    else if (Regex.IsMatch(expr, @"\s*//\s*reset\s*$", RegexOptions.IgnoreCase))
-                    {
-                        engine = new RecalcEngine();
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("Formula engine has been reset.");
-                        Console.ResetColor();
-                    }
-
-                    // help, includes list of all functions
-                    else if (Regex.IsMatch(expr, @"^\s*//\s*help\s*$", RegexOptions.IgnoreCase))
-                    {
-                        int column = 0;
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("");
-                        Console.WriteLine("Set( <identifier>, <expression> ) creates or changes a variable's value.\n");
-                        Console.WriteLine("<identifier> = <expression> defines a formula.\n  If a dependency in the formula changes, the value of the formula is updated.\n  Formulas cannot be redefined.\n");
-                        Console.WriteLine("Available functions (case sensitive):");
-                        foreach (string func in engine.GetAllFunctionNames())
-                        {
-                            Console.Write($"  {func,-14}");
-                            if (++column % 5 == 0)
-                                Console.WriteLine();
-                        }
-                        Console.WriteLine("  Set\n");
-                        Console.WriteLine("Available operators: = <> <= >= + - * / % in exactin && And || Or ! Not\n");
-                        Console.WriteLine("Records are written { <field>: <value>, ... } without quotes around the field name.");
-                        Console.WriteLine("Use the Table function for a list of records. Use [<value>,...] for a single column table.");
-                        Console.WriteLine("  Examples: { Name: \"Joe\", Age: 29 }, [ 1, 2, 3 ], ");
-                        Console.WriteLine("            Table( { Name: \"Joe\" }, { Name: \"Sally\" } )");
-                        Console.ResetColor();
-                    }
-
                     // eval and print everything else, unless empty lines and single line comment (which do nothing)
                     else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"\w"))
                     {
@@ -99,10 +74,10 @@ namespace PowerFxHostSamples
             }
         }
 
-        static void OnUpdate(string name, Microsoft.PowerFx.Core.Public.Values.FormulaValue newValue)
+        static void OnUpdate(string name, FormulaValue newValue)
         {
             Console.Write($"{name}: ");
-            if( newValue is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+            if( newValue is ErrorValue errorValue)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error: " + errorValue.Errors[0].Message);
@@ -116,7 +91,7 @@ namespace PowerFxHostSamples
         {
             string resultString = "";
 
-            if (value is Microsoft.PowerFx.Core.Public.Values.RecordValue record)
+            if (value is RecordValue record)
             {
                 var separator = "";
                 resultString = "{";
@@ -128,7 +103,7 @@ namespace PowerFxHostSamples
                 }
                 resultString += "}";
             }
-            else if (value is Microsoft.PowerFx.Core.Public.Values.TableValue table)
+            else if (value is TableValue table)
             {
                 int valueSeen = 0, recordsSeen = 0;
                 string separator = "";
@@ -138,7 +113,7 @@ namespace PowerFxHostSamples
                 foreach (var row in table.Rows)
                 {
                     recordsSeen++;
-                    if (row.Value is Microsoft.PowerFx.Core.Public.Values.RecordValue scanRecord)
+                    if (row.Value is RecordValue scanRecord)
                     {
                         foreach (var field in scanRecord.Fields)
                             if (field.Name == "Value")
@@ -170,16 +145,80 @@ namespace PowerFxHostSamples
                     resultString += ")";
                 }
             }
-            else if (value is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+            else if (value is ErrorValue errorValue)
                 resultString = "<Error: " + errorValue.Errors[0].Message + ">";
-            else if (value is Microsoft.PowerFx.Core.Public.Values.StringValue str)
+            else if (value is StringValue str)
                 resultString = "\"" + str.ToObject().ToString().Replace("\"","\"\"") + "\"";
-            else if (value is Microsoft.PowerFx.Core.Public.Values.FormulaValue fv)
+            else if (value is FormulaValue fv)
                 resultString = fv.ToObject().ToString();
             else
                 throw new Exception("unexpected type in PrintResult");
 
             return(resultString);
+        }
+
+        private class ResetFunction : ReflectionFunction
+        {
+            public ResetFunction() : base("Reset", FormulaType.Boolean) { }
+
+            public BooleanValue Execute()
+            {
+                ResetEngine();
+                return FormulaValue.New(true);
+            }
+        }
+
+        private class ExitFunction : ReflectionFunction
+        {
+            public ExitFunction() : base("Exit", FormulaType.Boolean) { }
+
+            public BooleanValue Execute()
+            {
+                System.Environment.Exit(0);
+                return FormulaValue.New(true);
+            }
+        }
+
+        private class HelpFunction : ReflectionFunction
+        {
+            public HelpFunction() : base("Help", FormulaType.String) { }
+
+            public StringValue Execute()
+            {
+                int column = 0;
+                string funcList = "";
+                foreach (string func in engine.GetAllFunctionNames())
+                {
+                    funcList += $"  {func,-14}";
+                    if (++column % 5 == 0)
+                        funcList += "\n";
+                }
+                funcList += "  Set";
+
+                return FormulaValue.New( 
+@"
+Set( <identifier>, <expression> ) creates or changes a variable's value.
+<identifier> = <expression> defines a formula with automatic recalc.
+<expression> alone is evaluated and the result displayed.
+
+Available functions (all are case sensitive):
+" + funcList + @"
+
+Available operators: = <> <= >= + - * / % && And || Or ! Not in exactin 
+
+Record syntax is { < field >: < value >, ... } without quoted field names.
+    Example: { Name: ""Joe"", Age: 29 }
+Use the Table function for a list of records.  
+    Example: Table( { Name: ""Joe"" }, { Name: ""Sally"" } )
+Use [ <value>, ... ] for a single column table, field name is ""Value"".
+    Examples: [ 1, 2, 3 ] 
+Records and Tables can be arbitrarily nested.
+
+Once a formula is defined or a variable's type is defined, it cannot be changed.
+    Use the Reset() function to clear all formulas and variables.
+"
+                );
+            }
         }
     }
 }
