@@ -17,7 +17,7 @@ namespace PowerFxHostSamples
             var engine = new RecalcEngine();
 
             Console.Write("Microsoft Power Fx Console Formula REPL, Version 0.2\n");
-            Console.Write("Commands: //help and //exit\n");
+            Console.Write("Commands: //help, //reset, and //exit\n");
             
             // loop
             while (true)
@@ -45,6 +45,15 @@ namespace PowerFxHostSamples
                     // exit
                     else if (Regex.IsMatch(expr, @"\s*//\s*exit\s*$", RegexOptions.IgnoreCase))
                         return;
+
+                    // reset
+                    else if (Regex.IsMatch(expr, @"\s*//\s*reset\s*$", RegexOptions.IgnoreCase))
+                    {
+                        engine = new RecalcEngine();
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("Formula engine has been reset.");
+                        Console.ResetColor();
+                    }
 
                     // help, includes list of all functions
                     else if (Regex.IsMatch(expr, @"^\s*//\s*help\s*$", RegexOptions.IgnoreCase))
