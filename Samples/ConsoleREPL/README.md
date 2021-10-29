@@ -6,7 +6,7 @@ This sample uses the Power Fx core packages to implement a simple Read-Eval-Prin
 
 After building, run ConsoleREPL from the command line.
 
-At the prompt, enter `//help` to display helpful information.  The available function list will vary as functions are added to the core.  Hosts can add their own functions too.
+At the prompt, enter `Help()` to display helpful information.  The available function list will vary as functions are added to the core and hosts can add their own functions too (as this sample does).
 
 Use the `Set` function to create or change a variable's value.  Variables are typed based on the type of the expression that is fed into them and subsequent Set operations must reaffirm that type.  For example, `Set( Name, "Fred" )` defines the `Name` variable of type string and sets it to `Fred`.
 
@@ -31,7 +31,7 @@ In this example, the formulas for Area and Circumference are defined.  Just as i
 
 ```
 Microsoft Power Fx Console Formula REPL, Version 0.2
-Commands: //help, //reset, and //exit
+Enter Excel formulas.  Use "Help()" for details.
 
 > Set( Radius, 10 )
 Radius: 10
@@ -61,7 +61,7 @@ This example creates a simple table of Students and then uses the Filter and Sor
 
 ```
 Microsoft Power Fx Console Formula REPL, Version 0.2
-Commands: //help, //reset, and //exit
+Enter Excel formulas.  Use "Help()" for details.
 
 > Set( Students, Table( { Name: "Nick", Age: 21 }, { Name: "Lisa", Age: 24 }, { Name: "Sam", Age: 19 }, { Name: "Emma", Age: 25 } ) )
 Students: Table({Name:"Nick", Age:21}, {Name:"Lisa", Age:24}, {Name:"Sam", Age:19}, {Name:"Emma", Age:25})
