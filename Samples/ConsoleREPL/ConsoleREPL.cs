@@ -59,6 +59,7 @@ namespace PowerFxHostSamples
                     else if (Regex.IsMatch(expr, @"^\s*//\s*help\s*$", RegexOptions.IgnoreCase))
                     {
                         int column = 0;
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("");
                         Console.WriteLine("Set( <identifier>, <expression> ) creates or changes a variable's value.\n");
                         Console.WriteLine("<identifier> = <expression> defines a formula.\n  If a dependency in the formula changes, the value of the formula is updated.\n  Formulas cannot be redefined.\n");
@@ -70,7 +71,12 @@ namespace PowerFxHostSamples
                                 Console.WriteLine();
                         }
                         Console.WriteLine("  Set\n");
-                        Console.WriteLine("Available operators: = <> <= >= + - * / % in exactin && And || Or ! Not");
+                        Console.WriteLine("Available operators: = <> <= >= + - * / % in exactin && And || Or ! Not\n");
+                        Console.WriteLine("Records are written { <field>: <value>, ... } without quotes around the field name.");
+                        Console.WriteLine("Use the Table function for a list of records. Use [<value>,...] for a single column table.");
+                        Console.WriteLine("  Examples: { Name: \"Joe\", Age: 29 }, [ 1, 2, 3 ], ");
+                        Console.WriteLine("            Table( { Name: \"Joe\" }, { Name: \"Sally\" } )");
+                        Console.ResetColor();
                     }
 
                     // eval and print everything else, unless empty lines and single line comment (which do nothing)
@@ -79,7 +85,7 @@ namespace PowerFxHostSamples
                         var result = engine.Eval(expr);
 
                         if (result is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
-                            throw new Exception(errorValue.Errors[0].Message);
+                            throw new Exception("Error: " + errorValue.Errors[0].Message);
                         else
                             Console.WriteLine(PrintResult(result));
                     }
@@ -99,7 +105,7 @@ namespace PowerFxHostSamples
             if( newValue is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(errorValue.Errors[0].Message);
+                Console.WriteLine("Error: " + errorValue.Errors[0].Message);
                 Console.ResetColor();
             }
             else
@@ -124,7 +130,7 @@ namespace PowerFxHostSamples
             }
             else if (value is Microsoft.PowerFx.Core.Public.Values.TableValue table)
             {
-                int valueSeen = 0, recordsSeen = 0, nonValueSeen = 0;
+                int valueSeen = 0, recordsSeen = 0;
                 string separator = "";
 
                 // check if the table can be represented in simpler [ ] notation,
@@ -142,13 +148,13 @@ namespace PowerFxHostSamples
                                 separator = ", ";
                             }
                             else
-                                nonValueSeen++;
+                                valueSeen = 0;
                     }
                     else
-                        nonValueSeen++;
+                        valueSeen = 0;
                 }
 
-                if (valueSeen == recordsSeen && nonValueSeen == 0)
+                if (valueSeen == recordsSeen)
                     return ("[" + resultString + "]");
                 else
                 {
@@ -164,8 +170,10 @@ namespace PowerFxHostSamples
                     resultString += ")";
                 }
             }
+            else if (value is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+                resultString = "<Error: " + errorValue.Errors[0].Message + ">";
             else if (value is Microsoft.PowerFx.Core.Public.Values.StringValue str)
-                resultString = "\"" + str.ToObject().ToString() + "\"";
+                resultString = "\"" + str.ToObject().ToString().Replace("\"","\"\"") + "\"";
             else if (value is Microsoft.PowerFx.Core.Public.Values.FormulaValue fv)
                 resultString = fv.ToObject().ToString();
             else
