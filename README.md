@@ -1,14 +1,10 @@
-# Project
+# Microsoft Power Fx Host Samples
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+This repo contains samples that exercise Power Fx.  
 
-As the maintainer of this project, please make a few updates:
+These samples depend on the sources and packages from [https://github.com/microsoft/Power-Fx](https://github.com/microsoft/Power-Fx).
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Each sample is in it's own directory under `Samples` and self contained.  Check the README.md for each. Most will include a Visual Studio solution file for each building.
 
 ## Contributing
 
