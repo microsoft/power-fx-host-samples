@@ -25,7 +25,7 @@ There are no arrays in Power Fx, everything is expressed as a table.  But, one c
 
 ## Examples
 
-### Simple ciruclar formulas
+### Simple circular formulas
 
 In this example, the formulas for Area and Circumference are defined.  Just as in a spreadsheet, as Radius changes these values are automatically recalculated.  Note that Pi is also a formula, a static one with no dependencies, making this an immutable value.
 
