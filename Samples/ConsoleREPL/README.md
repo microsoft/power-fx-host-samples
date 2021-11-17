@@ -1,6 +1,6 @@
 # Console REPL
 
-This sample uses the Power Fx core packages to implement a simple Read-Eval-Pring-Loop in a console app.  It supports defining formulas that recalc automatically and creating and modifying variables with the Set function.
+This sample uses the Power Fx core packages to implement a simple Read-Eval-Print-Loop in a console app.  It supports defining formulas that recalc automatically and creating and modifying variables with the Set function.
 
 ## Usage
 
