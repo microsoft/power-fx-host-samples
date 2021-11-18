@@ -1,0 +1,4 @@
+﻿Diff: = Score2 - Score
+Name: = Name & Diff
+Total: = PreviousRecord.Total + Score
+RowDiff: = Score - PreviousRecord.Score
