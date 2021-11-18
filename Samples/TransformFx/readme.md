@@ -1,9 +1,9 @@
-﻿### Transform samples 
+﻿## Transform samples 
 
 These samples show how Power Fx rules can do transforms.
 
 
-## Transform a Record into a table row.
+### Transform a Record into a table row.
 This transform an arbitrary json object into a flat record . 
 
 Run: `TransformFx.exe Record.json RecordTransform.fx.yaml`
@@ -38,12 +38,12 @@ DistanceKilo : 35.41815795752803
 ```
 
 
-## Transform a table 
+### Transform a table with calculated columns
 This creates calculated columns in a table. 
 
 Run: `TransformFx.exe Table.json TableTransform.fx.yaml`
 
-** Input table **
+**Input table**
 ```
 Name,Score,Score2
 Bob,100,150
@@ -59,7 +59,7 @@ Total: = PreviousRecord.Total + Score
 RowDiff: = Score - PreviousRecord.Score
 ```
 
-** Output Table *** 
+**Output Table** 
 ```
 Name,Score,Score2,Diff,Name,Total,RowDiff
 Bob,100,150,50,Bob50,100,100
