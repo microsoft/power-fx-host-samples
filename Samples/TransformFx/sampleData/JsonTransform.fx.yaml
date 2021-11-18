@@ -1,0 +1,5 @@
+﻿FirstName: =Person.First
+LastName: =Person.Last
+Score: = Score
+DistanceKilo : =DistanceMiles / 1.609344
+
