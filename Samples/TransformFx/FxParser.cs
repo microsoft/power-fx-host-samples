@@ -9,9 +9,15 @@ using System.Text;
 namespace TransformFx
 {
     // Read a .fx.yaml file and return a group of formulas. 
-    class FxParser
+    // This can produce a flat (non-nested) record where each field is defined by a Fx formula.
+    class FxRules
     {
-        public class ColumnDescr
+        private Rule[] _formulas;
+
+        public IEnumerable<Rule> Rules => _formulas;
+
+        // Describe each rule in the file. 
+        public class Rule
         {
             public string Name;
             public string Formula;
@@ -20,11 +26,11 @@ namespace TransformFx
         // TODO - share this with Yaml parser in https://github.com/microsoft/PowerApps-Language-Tooling 
         // File is "Name: =formula"
         // Should make this a .fx.yaml
-        public ColumnDescr[] ReadColumns(string file)
+        public static FxRules ParseYamlFile(string file)
         {
             var lines = File.ReadAllLines(file);
 
-            List<ColumnDescr> columns = new List<ColumnDescr>();
+            List<Rule> columns = new List<Rule>();
             foreach (var line in lines)
             {
                 if (string.IsNullOrWhiteSpace(line)) { continue; }
@@ -35,13 +41,16 @@ namespace TransformFx
                 var name = line.Substring(0, i);
                 var formula = line.Substring(i + split.Length);
 
-                columns.Add(new ColumnDescr
+                columns.Add(new Rule
                 {
                     Name = name,
                     Formula = formula.Trim()
                 });
             }
-            return columns.ToArray();
+            return new FxRules
+            {
+                 _formulas = columns.ToArray()
+            };
         }
     }
 }
