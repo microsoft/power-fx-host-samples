@@ -1,0 +1,8 @@
+
+*/obj/**
+*/bin/**
+*/node_modules/**
+*/.vs/**
+*.lock
+.vscode/**
+*.user

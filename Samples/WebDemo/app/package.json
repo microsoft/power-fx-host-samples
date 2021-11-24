@@ -1,0 +1,37 @@
+{
+  "name": "PowerFxDemoApp",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": ".",
+  "dependencies": {
+    "@fluentui/react-icons-mdl2": "1.1.1",
+    "@microsoft/power-fx-formulabar": "2.0.4",
+    "monaco-editor": "0.27.0",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-scripts": "4.0.3",
+    "typescript": "4.1.2"
+  },
+  "devDependencies": {
+    "@types/react": "16.9.9",
+    "@types/react-dom": "16.9.2",
+    "monaco-editor-webpack-plugin": "4.0.0",
+    "@fluentui/react": "8.41.4",
+    "react-app-rewired": "2.1.8"
+  },
+  "scripts": {
+    "setup": "npx vsts-npm-auth -config .npmrc",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
+}
