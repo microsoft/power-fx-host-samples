@@ -4,6 +4,8 @@ The formula bar is a client-side react control that wraps the[ Monaco editor](ht
 
 ![image](https://user-images.githubusercontent.com/1538900/143385087-c086a26c-9f0d-4989-b5b5-0fe489ebc314.png)
 
+(This sample is based on React. For a sample using Angular, see https://github.com/Felx-B/ng-power-fx-formulabar)
+
 # Consuming the formula bar
 
 The Power Fx formula bar is provided via a react control in the [@microsoft/power-fx-formulabar](https://www.npmjs.com/package/@microsoft/power-fx-formulabar) npm package.
