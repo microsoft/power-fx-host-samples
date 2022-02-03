@@ -55,7 +55,7 @@ namespace PowerFxHostSamples
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
 
                     // eval and print everything else, unless empty lines and single line comment (which do nothing)
-                    else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"\w"))
+                    else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"[^\s]"))
                     {
                         var result = engine.Eval(expr);
 
