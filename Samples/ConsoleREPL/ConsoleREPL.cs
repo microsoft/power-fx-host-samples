@@ -91,7 +91,9 @@ namespace PowerFxHostSamples
         {
             string resultString = "";
 
-            if (value is RecordValue record)
+            if(value is BlankValue)
+                resultString = "Blank()";
+            else if (value is RecordValue record)
             {
                 var separator = "";
                 resultString = "{";
