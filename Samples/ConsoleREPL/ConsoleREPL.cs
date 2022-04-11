@@ -141,7 +141,7 @@ namespace PowerFxHostSamples
                     separator = "";
                     foreach (var row in table.Rows)
                     {
-                        resultString += separator + PrintResult(row.Value);
+                        resultString += separator + PrintResult(row.IsValue ? row.Value : row.Blank);
                         separator = ", ";
                     }
                     resultString += ")";
