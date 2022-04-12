@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Microsoft.PowerFx.Core.Public.Types;
 using Microsoft.PowerFx.Core.Public.Values;
 using System;
 using System.Linq;
@@ -49,55 +50,59 @@ namespace PowerFxService.Model
             }
             else if (result is TableValue t)
             {
-                if (t.IsColumn)
+                var tableType = (TableType)t.Type;
+                var canUseSquareBracketSyntax = t.IsColumn && t.Rows.All(r => r.IsValue) && tableType.GetNames().First().Name == "Value";
+                if (canUseSquareBracketSyntax)
                 {
                     sb.Append('[');
+                }
+                else
+                {
+                    sb.Append("Table(");
+                }
 
-                    string dil = "";
-                    foreach (DValue<RecordValue> row in t.Rows)
+                var dil = string.Empty;
+                foreach (var row in t.Rows)
+                {
+                    sb.Append(dil);
+                    dil = ",";
+
+                    if (canUseSquareBracketSyntax)
                     {
-                        sb.Append(dil);
                         var val = row.Value.Fields.First().Value;
                         TestToString(val, sb);
-                        dil = ",";
                     }
+                    else
+                    {
+                        if (row.IsValue)
+                        {
+                            TestToString(row.Value, sb);
+                        }
+                        else
+                        {
+                            TestToString(row.ToFormulaValue(), sb);
+                        }
+                    }
+
+                    dil = ",";
+                }
+
+                if (canUseSquareBracketSyntax)
+                {
                     sb.Append(']');
                 }
                 else
                 {
-                    sb.Append('[');
-
-                    string dil = "";
-                    foreach (DValue<RecordValue> row in t.Rows)
-                    {
-                        sb.Append(dil);
-                        TestToString(row.Value, sb);
-                        dil = ",";
-                    }
-                    sb.Append(']');
+                    sb.Append(')');
                 }
             }
             else if (result is RecordValue r)
             {
-                // If this is a single record with field Value, then show as 
-                // [x] instead of  {value : x}
-
                 var fields = r.Fields.ToArray();
-                if (fields.Length == 1)
-                {
-                    if (fields[0].Name == "Value")
-                    {
-                        sb.Append('[');
-                        TestToString(fields[0].Value, sb);
-                        sb.Append(']');
-                        return;
-                    }
-                }
-
                 Array.Sort(fields, (a, b) => string.CompareOrdinal(a.Name, b.Name));
 
                 sb.Append('{');
-                string dil = "";
+                var dil = string.Empty;
 
                 foreach (var field in fields)
                 {
@@ -108,11 +113,32 @@ namespace PowerFxService.Model
 
                     dil = ",";
                 }
+
                 sb.Append('}');
+            }
+            else if (result is TimeValue tv)
+            {
+                sb.Append(tv.Value.ToString());
             }
             else if (result is BlankValue)
             {
                 sb.Append("Blank()");
+            }
+            else if (result is DateValue d)
+            {
+                // Date(YYYY,MM,DD)
+                var date = d.Value;
+                sb.Append($"Date({date.Year},{date.Month},{date.Day})");
+            }
+            else if (result is DateTimeValue dt)
+            {
+                // DateTime(yyyy,MM,dd,HH,mm,ss,fff)
+                var dateTime = dt.Value;
+                sb.Append($"DateTime({dateTime.Year},{dateTime.Month},{dateTime.Day},{dateTime.Hour},{dateTime.Minute},{dateTime.Second},{dateTime.Millisecond})");
+            }
+            else if (result is ErrorValue)
+            {
+                sb.Append(result);
             }
             else
             {
