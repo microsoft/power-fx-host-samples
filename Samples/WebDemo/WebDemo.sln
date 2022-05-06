@@ -3,15 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDemo", "WebDemo.csproj", "{A4056EEE-2446-4740-A655-232110F1C9C4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerFx", "PowerFx", "{2A1BDF25-1051-4B85-BF5A-61D98C7642BF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.Core", "D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.Core\Microsoft.PowerFx.Core.csproj", "{5AEAECC6-8727-4372-959B-31F476AA8A0C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.Interpreter", "D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.Interpreter\Microsoft.PowerFx.Interpreter.csproj", "{BCB75109-9EA4-404A-9D32-B0D303E81FC8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PowerFx.LanguageServerProtocol", "D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.LanguageServerProtocol\Microsoft.PowerFx.LanguageServerProtocol.csproj", "{86D1776A-69F9-4B36-B155-CA9E5566D79D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDemo", "WebDemo.csproj", "{A4056EEE-2446-4740-A655-232110F1C9C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,26 +15,9 @@ Global
 		{A4056EEE-2446-4740-A655-232110F1C9C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4056EEE-2446-4740-A655-232110F1C9C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4056EEE-2446-4740-A655-232110F1C9C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5AEAECC6-8727-4372-959B-31F476AA8A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AEAECC6-8727-4372-959B-31F476AA8A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AEAECC6-8727-4372-959B-31F476AA8A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AEAECC6-8727-4372-959B-31F476AA8A0C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCB75109-9EA4-404A-9D32-B0D303E81FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCB75109-9EA4-404A-9D32-B0D303E81FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCB75109-9EA4-404A-9D32-B0D303E81FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCB75109-9EA4-404A-9D32-B0D303E81FC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{86D1776A-69F9-4B36-B155-CA9E5566D79D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86D1776A-69F9-4B36-B155-CA9E5566D79D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86D1776A-69F9-4B36-B155-CA9E5566D79D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86D1776A-69F9-4B36-B155-CA9E5566D79D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{5AEAECC6-8727-4372-959B-31F476AA8A0C} = {2A1BDF25-1051-4B85-BF5A-61D98C7642BF}
-		{BCB75109-9EA4-404A-9D32-B0D303E81FC8} = {2A1BDF25-1051-4B85-BF5A-61D98C7642BF}
-		{86D1776A-69F9-4B36-B155-CA9E5566D79D} = {2A1BDF25-1051-4B85-BF5A-61D98C7642BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C688CDFB-74CA-49E3-99AB-51547F5BC581}

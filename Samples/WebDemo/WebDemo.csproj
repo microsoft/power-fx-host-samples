@@ -21,9 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.Core\Microsoft.PowerFx.Core.csproj" />
-    <ProjectReference Include="D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.Interpreter\Microsoft.PowerFx.Interpreter.csproj" />
-    <ProjectReference Include="D:\dev\pa2\Power-Fx\src\libraries\Microsoft.PowerFx.LanguageServerProtocol\Microsoft.PowerFx.LanguageServerProtocol.csproj" />
+    <PackageReference Include="Microsoft.PowerFx.Core" Version="0.2.1-preview.20220505-303254" />
+    <PackageReference Include="Microsoft.PowerFx.Interpreter" Version="0.2.1-preview.20220505-303254" />
+    <PackageReference Include="Microsoft.PowerFx.LanguageServerProtocol" Version="0.2.1-preview.20220505-303254" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
