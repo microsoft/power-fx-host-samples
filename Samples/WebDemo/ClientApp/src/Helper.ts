@@ -1,10 +1,5 @@
 
 function getServerUrl() {
-    // dev mode use dev server
-    if (window.location.hostname === 'localhost') {
-        return 'https://localhost:44351/';
-    };
-
     return `${window.location.origin}${window.location.pathname}`;
 }
 
