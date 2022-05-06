@@ -15,6 +15,8 @@ namespace Project1
         {
             Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
 
+            // See PowerFxScopeFactory for creating the RecalcEngine. 
+
             CreateHostBuilder(args).Build().Run();
         }
 

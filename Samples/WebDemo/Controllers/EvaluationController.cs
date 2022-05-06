@@ -40,6 +40,8 @@ namespace PowerFxService.Controllers
                 var engine = new PowerFxScopeFactory().GetEngine();
                 
                 var parameters = (RecordValue) FormulaValue.FromJson(body.context);
+                
+                // TODO - this should be eval Async and catch timeouts. 
                 var result = engine.Eval(body.expression, parameters);
 
                 var resultString = PowerFxHelper.TestToString(result);
