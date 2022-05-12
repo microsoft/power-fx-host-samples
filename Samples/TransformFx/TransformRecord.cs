@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 // 
 using Microsoft.PowerFx;
-using Microsoft.PowerFx.Core.Public.Values;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.PowerFx.Types;
 
 namespace TransformFx
 {

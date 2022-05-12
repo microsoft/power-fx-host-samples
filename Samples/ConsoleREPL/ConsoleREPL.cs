@@ -5,10 +5,10 @@
 // Licensed under the MIT license
 
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.PowerFx;
-using Microsoft.PowerFx.Core.Public.Values;
-using Microsoft.PowerFx.Core.Public.Types;
+using Microsoft.PowerFx.Types;
 
 namespace PowerFxHostSamples
 {
@@ -17,19 +17,22 @@ namespace PowerFxHostSamples
         private static RecalcEngine engine;
 
         static void ResetEngine()
-        {
-            engine = new RecalcEngine();
-            engine.AddFunction(new HelpFunction());
-            engine.AddFunction(new ResetFunction());
-            engine.AddFunction(new ExitFunction());
+        {                        
+            var config = new PowerFxConfig();
+            config.AddFunction(new HelpFunction());
+            config.AddFunction(new ResetFunction());
+            config.AddFunction(new ExitFunction());
+
+            engine = new RecalcEngine(config);            
         }
 
         public static void Main()
         {
             ResetEngine();
 
-            Console.WriteLine("Microsoft Power Fx Console Formula REPL, Version 0.2");
-            Console.WriteLine("Enter Excel formulas.  Use \"Help()\" for details.");
+            var version = typeof(RecalcEngine).Assembly.GetName().Version.ToString();
+            Console.WriteLine($"Microsoft Power Fx Console Formula REPL, Version {version}");
+            Console.WriteLine($"Enter Excel formulas.  Use \"Help()\" for details.");
             
             // loop
             while (true)
@@ -59,7 +62,7 @@ namespace PowerFxHostSamples
                     {
                         var result = engine.Eval(expr);
 
-                        if (result is Microsoft.PowerFx.Core.Public.Values.ErrorValue errorValue)
+                        if (result is ErrorValue errorValue)
                             throw new Exception("Error: " + errorValue.Errors[0].Message);
                         else
                             Console.WriteLine(PrintResult(result));
@@ -183,22 +186,25 @@ namespace PowerFxHostSamples
 
         private class HelpFunction : ReflectionFunction
         {
-            public HelpFunction() : base("Help", FormulaType.String) { }
+            public HelpFunction() : base("Help", FormulaType.Boolean) { }
 
-            public StringValue Execute()
+            public BooleanValue Execute()
             {
                 int column = 0;
                 string funcList = "";
-                foreach (string func in engine.GetAllFunctionNames())
+                var funcNames = engine.Config.FunctionInfos.Select(x => x.Name).Distinct();
+                foreach (string func in funcNames)
                 {
                     funcList += $"  {func,-14}";
                     if (++column % 5 == 0)
                         funcList += "\n";
                 }
                 funcList += "  Set";
-
-                return FormulaValue.New( 
-@"
+                
+                // If we return a string, it gets escaped. 
+                // Just write to console 
+                Console.WriteLine(
+                @"
 Set( <identifier>, <expression> ) creates or changes a variable's value.
 <identifier> = <expression> defines a formula with automatic recalc.
 <expression> alone is evaluated and the result displayed.
@@ -220,6 +226,7 @@ Once a formula is defined or a variable's type is defined, it cannot be changed.
     Use the Reset() function to clear all formulas and variables.
 "
                 );
+                return FormulaValue.New(true);
             }
         }
     }
