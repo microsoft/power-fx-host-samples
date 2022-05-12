@@ -5,6 +5,7 @@
 // Licensed under the MIT license
 
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.PowerFx;
 using Microsoft.PowerFx.Types;
@@ -191,7 +192,8 @@ namespace PowerFxHostSamples
             {
                 int column = 0;
                 string funcList = "";
-                foreach (string func in engine.GetAllFunctionNames())
+                var funcNames = engine.Config.FunctionInfos.Select(x => x.Name).Distinct();
+                foreach (string func in funcNames)
                 {
                     funcList += $"  {func,-14}";
                     if (++column % 5 == 0)
