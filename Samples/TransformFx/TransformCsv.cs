@@ -3,11 +3,11 @@
 // 
 // Demonstration of using Power Fx for transforms. 
 using Microsoft.PowerFx;
-using Microsoft.PowerFx.Core.Public.Values;
 using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.PowerFx.Types;
 
 namespace TransformFx
 {
@@ -59,7 +59,7 @@ namespace TransformFx
                     var value = FormulaValue.New(0); // default value 
                     fields.Add(new NamedValue(columnName, value));
                 }
-                prevRecord = RecordValue.RecordFromFields(fields);
+                prevRecord = RecordValue.NewRecordFromFields(fields);
             }
 
             // Process each line
@@ -83,7 +83,7 @@ namespace TransformFx
 
                 foreach (var kv in columns)
                 {
-                    var fv = RecordValue.RecordFromFields(fields);
+                    var fv = RecordValue.NewRecordFromFields(fields);
 
                     var result = engine.Eval(kv.Formula, fv);
 
@@ -93,7 +93,7 @@ namespace TransformFx
                 // Write out existing values
                 // skip past 1st to exclude PrevRecord
                 var thisFields = fields.Skip(1);
-                prevRecord = RecordValue.RecordFromFields(thisFields);
+                prevRecord = RecordValue.NewRecordFromFields(thisFields);
 
                 // Write out full row.                 
                 string dil = "";
