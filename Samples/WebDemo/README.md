@@ -37,7 +37,7 @@ The Power Fx formula bar is provided via a react control in the [@microsoft/powe
 1. The client page instantiates a <PowerFxFormulaEditor> control and provides context via getDocumentUriAsync. 
 1. User edits text in the <PowerFxFormulaEditor> control. 
 1. The control sends a LSP message via `messageProcessor`
-1. That message is received server side by the ASP controller [LanguageServerController.HandleRequest](https://github.com/microsoft/power-fx-host-samples/blob/main/Samples/WebDemo/service/Controllers/LanguageServerController.cs). 
+1. That message is received server side by the ASP controller [LanguageServerController.HandleRequest](https://github.com/microsoft/power-fx-host-samples/blob/main/Samples/WebDemo/Controllers/LanguageServerController.cs). 
 1. The controller is just a lightweight controller that passes the message through to the [LanguageServer](https://github.com/microsoft/Power-Fx/blob/main/src/libraries/Microsoft.PowerFx.LanguageServerProtocol/LanguageServer/LanguageServer.cs) instance, which was implemented by the PowerFx.LSP package.   
 1. the `LanguageServer` class is sealed and ultimately calls back on the `RecalcEngine` instance to access symbols. It gets this instance via a [IPowerFxScopeFactory](https://github.com/microsoft/Power-Fx/blob/main/src/libraries/Microsoft.PowerFx.LanguageServerProtocol/LanguageServer/IPowerFxScopeFactory.cs) passed to the ctor. The `IPowerFxScopeFactory` maps the getDocumentUriAsync value back to a  [IPowerFxScope](https://github.com/microsoft/Power-Fx/blob/main/src/libraries/Microsoft.PowerFx.Core/Public/IPowerFxScope.cs) instance. This scope instance includes the `RecalcEngine` instance and captures the context from getDocumentUriAsync. In this sample, that context is the json state variables. 
 1. The `LanguageServer` calls methods on `IPowerFxScope` to do intellisense and returns the results back over the network channel according to the LSP. 
@@ -53,22 +53,16 @@ Dependencies:
 | (Client App) Formula Bar control | tbd | https://www.npmjs.com/package/@microsoft/power-fx-formulabar |
 
 # Build locally 
-
-1. Open and run `.\Service\PowerFxService.sln` in VS2019. 
-Be sure you're running in VS2019 (not an earlier version), and that you run via "PowerFxService" and not via IISExpress. 
-This will build and run the LSP and Eval service at https://localhost:5001
-These are just backend APIs and don't produce any UI. 
-
-2. Build the client-side formula bar in the `.\app` folder. 
-- `npm install`
-- `npm start`
-
-This will launch a webpage at  http://localhost:3000 hosting the formula bar control. This page will call the service from step 1. 
-
+This is a single ASP.Net app with react front-end. 
+https://docs.microsoft.com/en-us/visualstudio/javascript/tutorial-asp-net-core-with-react
+        
+1. Open and run `.\WebDemo.sln` in VS2019. 
+      
+The build should automatically build the C# server-side controllers as well as kick off NPM install to pull npm packages. 
+       
+Trouble shooting:
+- if you get build errors about "duplicate Assembly attributes", be sure to `git clean -xdf`
+        
 # Deploy
-1. in `.\app`, run `npm build`
-This will produce static build files in the `.\app\build` directory. 
-Copy these to the wwwroot. 
-
-2. Deploy the service to the same site. 
-
+Deploy as a regular ASP.Net website to Azure Websites. 
+        
