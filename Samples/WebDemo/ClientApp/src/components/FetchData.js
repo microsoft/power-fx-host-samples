@@ -19,7 +19,11 @@ export class FetchData extends Component {
           {forecasts.map(forecast =>
             <tr key={forecast.key}>
               <td>{forecast.key}</td>
-              <td>{forecast.value}</td>
+                  <td>
+                      <a href={forecast.url} target='_blank' rel='noreferrer'>
+                          {forecast.value}
+                      </a>
+                  </td>
             </tr>
           )}
         </tbody>
@@ -34,7 +38,10 @@ export class FetchData extends Component {
 
     return (
       <div>
-        <p><b>Version Info</b></p>
+            <p><b>Version Info</b></p>
+            <div style={{ marginTop: 10 }}>
+                <a href='https://github.com/microsoft/power-fx-host-samples/tree/main/Samples/WebDemo' target='_blank' rel='noreferrer'>Get source code</a>
+            </div>
         {contents}
       </div>
     );

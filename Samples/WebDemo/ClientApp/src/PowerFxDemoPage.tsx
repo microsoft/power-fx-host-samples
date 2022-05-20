@@ -56,6 +56,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
     return (
       <div>
         <h3>Context</h3>
+        <p>This is a JSON object whose properties become 'globals' in the Power Fx expression below.</p>
         <textarea style={{
           width: 'calc(100% - 6px)',
           height: 100,
@@ -69,6 +70,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           }} />
 
         <h3>Formula</h3>
+        <p>This is a Power Fx expression</p>
         <PowerFxFormulaEditor
           getDocumentUriAsync={this._getDocumentUriAsync}
           defaultValue={''}
@@ -85,7 +87,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           }}
         />
 
-        <h3>Evaluation</h3>
+        <h3>Evaluation Result</h3>
         <textarea style={{
           width: 'calc(100% - 6px)',
           height: 100,
@@ -94,11 +96,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           value={evaluation}
           readOnly={true} />
 
-        <div style={{ marginTop: 10 }}>
-          <a href='https://github.com/microsoft/power-fx-host-samples/tree/main/Samples/WebDemo' target='_blank' rel='noreferrer'>Get source code</a>
-        </div>
-
-        <FetchData/>
+        <FetchData />
       </div>
     );
   }
