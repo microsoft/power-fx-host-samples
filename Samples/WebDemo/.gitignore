@@ -6,3 +6,4 @@
 *.lock
 .vscode/**
 *.user
+build
