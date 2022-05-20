@@ -9,6 +9,7 @@ import { IDisposable, MessageProcessor, PowerFxFormulaEditor } from '@microsoft/
 
 import { sendDataAsync } from './Helper';
 import { PowerFxLanguageClient } from './PowerFxLanguageClient';
+import { FetchData } from './components/FetchData';
 
 interface PowerFxDemoPageState {
   context: string;    // additional symbols passed in as a json object. 
@@ -96,6 +97,8 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
         <div style={{ marginTop: 10 }}>
           <a href='https://github.com/microsoft/power-fx-host-samples/tree/main/Samples/WebDemo' target='_blank' rel='noreferrer'>Get source code</a>
         </div>
+
+        <FetchData/>
       </div>
     );
   }
