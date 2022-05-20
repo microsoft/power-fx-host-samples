@@ -72,7 +72,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           getDocumentUriAsync={this._getDocumentUriAsync}
           defaultValue={''}
           messageProcessor={this._messageProcessor}
-          maxLineCount={4}
+          maxLineCount={10}
           minLineCount={4}
           onChange={(newValue: string): void => {
             this.setState({ expression: newValue, hasErrors: false });
