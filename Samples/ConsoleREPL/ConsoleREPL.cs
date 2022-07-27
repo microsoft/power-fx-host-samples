@@ -152,6 +152,8 @@ namespace PowerFxHostSamples
             }
             else if (value is ErrorValue errorValue)
                 resultString = "<Error: " + errorValue.Errors[0].Message + ">";
+            else if (value is UntypedObjectValue)
+                resultString = "<Untyped: Use Value, Text, Boolean, and other functions to establish the type.>";            
             else if (value is StringValue str)
                 resultString = "\"" + str.ToObject().ToString().Replace("\"","\"\"") + "\"";
             else if (value is FormulaValue fv)
