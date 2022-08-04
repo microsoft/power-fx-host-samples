@@ -42,7 +42,13 @@ namespace PowerFxService.Controllers
                 var parameters = (RecordValue) FormulaValue.FromJson(body.context);
                 
                 // TODO - this should be eval Async and catch timeouts. 
-                var result = engine.Eval(body.expression, parameters);
+                if (parameters == null)
+                {
+                    parameters = RecordValue.Empty();
+                }
+                var check = engine.Check(body.expression, parameters.Type, options:null);
+                check.ThrowOnErrors();
+                var result =  check.Expression.EvalAsync(parameters, cancel: CancellationToken.None).Result;
 
                 var resultString = PowerFxHelper.TestToString(result);
 
