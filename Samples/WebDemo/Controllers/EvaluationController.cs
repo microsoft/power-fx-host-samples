@@ -18,7 +18,7 @@ namespace PowerFxService.Controllers
     public class EvaluationController : ControllerBase
     {
         private readonly ILogger<EvaluationController> _logger;
-        public static TimeSpan timeout = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan _timeout = TimeSpan.FromSeconds(2);
 
         public EvaluationController(ILogger<EvaluationController> logger)
         {
@@ -39,7 +39,7 @@ namespace PowerFxService.Controllers
         public async Task<IActionResult> HandleRequestAsync([FromBody] RequestBody body)
         {
             var cts = new CancellationTokenSource();
-            cts.CancelAfter(timeout);
+            cts.CancelAfter(_timeout);
             try
             {
                 var engine = new PowerFxScopeFactory().GetEngine();
@@ -50,8 +50,9 @@ namespace PowerFxService.Controllers
                 {
                     parameters = RecordValue.Empty();
                 }
-
-                var result = await EvalAsync(engine, body.expression, cts.Token, parameters, options: null);
+                var check = engine.Check(body.expression, parameters.Type, options:null);
+                check.ThrowOnErrors();
+                var result = await check.Expression.EvalAsync(parameters, cts.Token);
                 var resultString = PowerFxHelper.TestToString(result);
 
                 return StatusCode(200, new { result = resultString });
@@ -64,17 +65,6 @@ namespace PowerFxService.Controllers
             {
                 cts.Dispose();
             }
-        }
-
-        private async Task<FormulaValue> EvalAsync(IPowerFxEngine engine, string expressionText, CancellationToken cancel, RecordValue parameters = null, ParserOptions options = null)
-        {
-            if (parameters == null)
-            {
-                parameters = RecordValue.Empty();
-            }
-            var check = engine.Check(expressionText, parameters.Type, options);
-            check.ThrowOnErrors();
-            return await check.Expression.EvalAsync(parameters, cancel);
         }
     }
 }
