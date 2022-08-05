@@ -54,9 +54,10 @@ namespace PowerFxService.Controllers
                 check.ThrowOnErrors();
                 var eval = check.GetEvaluator();                
                 var result = await eval.EvalAsync(cts.Token, parameters);
+                var tokens = engine.Tokenize(body.expression);
                 var resultString = PowerFxHelper.TestToString(result);
 
-                return StatusCode(200, new { result = resultString });
+                return StatusCode(200, new { result = resultString, tokens = tokens, parse = check.Parse });
             }
             catch (Exception ex)
             {
