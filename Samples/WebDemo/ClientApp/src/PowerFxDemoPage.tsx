@@ -113,7 +113,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
     if (response.result) {
       this.setState({ evaluation: response.result, tokens: response.tokens, parse: response.parse, hasErrors: false });
     } else if (response.error) {
-      this.setState({ evaluation: response.error, tokens: [], parse: response.error,hasErrors: true });
+      this.setState({ evaluation: response.error, tokens: [], parse: response.parse,hasErrors: true });
     } else {
       this.setState({ evaluation: '', tokens: [], parse:'', hasErrors: false });
     }
