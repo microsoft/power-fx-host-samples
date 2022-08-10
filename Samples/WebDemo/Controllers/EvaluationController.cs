@@ -2,13 +2,16 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.PowerFx;
+using Microsoft.PowerFx.Syntax;
 using Microsoft.PowerFx.Types;
 using PowerFxService.Model;
+using WebDemo.Commons;
 
 namespace PowerFxService.Controllers
 {
@@ -38,6 +41,8 @@ namespace PowerFxService.Controllers
         [HttpPost]
         public async Task<IActionResult> HandleRequestAsync([FromBody] RequestBody body)
         {
+            IReadOnlyList<Token> tokens = null;
+            CheckResult check = null;
             var cts = new CancellationTokenSource();
             cts.CancelAfter(_timeout);
             try
@@ -50,18 +55,28 @@ namespace PowerFxService.Controllers
                 {
                     parameters = RecordValue.Empty();
                 }
-                var check = engine.Check(body.expression, parameters.Type, options:null);
+
+                tokens = engine.Tokenize(body.expression);
+                check = engine.Check(body.expression, parameters.Type, options: null);
                 check.ThrowOnErrors();
                 var eval = check.GetEvaluator();                
                 var result = await eval.EvalAsync(cts.Token, parameters);
-                var tokens = engine.Tokenize(body.expression);
                 var resultString = PowerFxHelper.TestToString(result);
-
-                return StatusCode(200, new { result = resultString, tokens = tokens, parse = check.Parse });
+                return StatusCode(200, new
+                {
+                    result = resultString,
+                    tokens = tokens,
+                    parse = ParsePreety.PrettyPrint(check.Parse.Root)
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(200, new { error = ex.Message });
+                return StatusCode(200, new
+                {
+                    error = ex.Message,
+                    tokens = tokens,
+                    parse = ParsePreety.PrettyPrint(check.Parse.Root)
+                });
             }
             finally
             {
