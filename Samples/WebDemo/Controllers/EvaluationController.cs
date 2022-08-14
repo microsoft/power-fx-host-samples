@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +24,21 @@ namespace PowerFxService.Controllers
     {
         private readonly ILogger<EvaluationController> _logger;
         private static readonly TimeSpan _timeout = TimeSpan.FromSeconds(2);
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public EvaluationController(ILogger<EvaluationController> logger)
         {
             _logger = logger;
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Converters =
+                {
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+                    new TexlNodeConverter()
+
+                }
+            };
         }
 
         // Passed  in from demo page to do an evaluation.
@@ -65,7 +78,7 @@ namespace PowerFxService.Controllers
                 {
                     result = resultString,
                     tokens = tokens,
-                    parse = ParsePreety.PrettyPrint(check.Parse.Root)
+                    parse = JsonSerializer.Serialize(check.Parse.Root, _jsonSerializerOptions)
                 });
             }
             catch (Exception ex)
@@ -74,7 +87,7 @@ namespace PowerFxService.Controllers
                 {
                     error = ex.Message,
                     tokens = tokens,
-                    parse = ParsePreety.PrettyPrint(check.Parse.Root)
+                    parse = JsonSerializer.Serialize(check.Parse.Root, _jsonSerializerOptions)
                 });
             }
             finally
