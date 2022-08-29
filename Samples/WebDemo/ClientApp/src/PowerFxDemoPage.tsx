@@ -83,7 +83,8 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           }}
           onEditorDidMount={(editor, _): void => { this._editor = editor }}
           lspConfig={{
-            enableSignatureHelpRequest: true
+            enableSignatureHelpRequest: true,
+            enableCodeAction: true
           }}
         />
 

@@ -25,13 +25,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerFx.Core" Version="0.2.2-preview" />
-    <PackageReference Include="Microsoft.PowerFx.Interpreter" Version="0.2.2-preview" />
-    <PackageReference Include="Microsoft.PowerFx.LanguageServerProtocol" Version="0.2.2-preview" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <ProjectReference Include="..\..\..\Power-Fx\src\libraries\Microsoft.PowerFx.Core\Microsoft.PowerFx.Core.csproj" />
+    <ProjectReference Include="..\..\..\Power-Fx\src\libraries\Microsoft.PowerFx.Interpreter\Microsoft.PowerFx.Interpreter.csproj" />
+    <ProjectReference Include="..\..\..\Power-Fx\src\libraries\Microsoft.PowerFx.LanguageServerProtocol\Microsoft.PowerFx.LanguageServerProtocol.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
