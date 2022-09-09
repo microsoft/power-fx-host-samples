@@ -28,6 +28,9 @@ namespace PowerFxHostSamples
 
         public static void Main()
         {
+            var expr = "";
+            var exprPartial = "";
+
             Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
 
             ResetEngine();
@@ -39,14 +42,27 @@ namespace PowerFxHostSamples
             // loop
             while (true)
             {
+                Match match;
+
                 // read
-                Console.Write("\n> ");
-                var expr = Console.ReadLine();
+                if( exprPartial == "" )
+                    Console.Write("\n> ");
+
+                var exprOne = Console.ReadLine();
+                if ((match = Regex.Match(expr, @"^(?<code>.*)//.*$")).Success )
+                    exprOne = match.Groups["code"].Value;
+
+                if (!Regex.IsMatch(exprOne, "^\\s*$"))
+                {
+                    exprPartial += " " + exprOne;
+                    if( Regex.Matches(exprPartial, "[\\{\\(\\[]").Count != Regex.Matches(exprPartial, "[\\}\\)\\]]").Count || Regex.IsMatch(exprOne, "(=|=\\>)\\s*$") )
+                        continue;
+                }
+                expr = exprPartial;
+                exprPartial = "";
 
                 try
                 {
-                    Match match;
-
                     // variable assignment: Set( <ident>, <expr> )
                     if ((match = Regex.Match(expr, @"^\s*Set\(\s*(?<ident>\w+)\s*,\s*(?<expr>.*)\)\s*$")).Success)
                     {
@@ -58,6 +74,14 @@ namespace PowerFxHostSamples
                     // formula definition: <ident> = <formula>
                     else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$")).Success)
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
+
+                    // function definition: <ident>
+                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*=>.*$"))
+                    {
+                        var res = engine.DefineFunctions(expr);
+                        if( res.Errors.Count() > 0 )
+                            throw new Exception("Error: " + res.Errors.First() );
+                    }
 
                     // eval and print everything else, unless empty lines and single line comment (which do nothing)
                     else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"[^\s]"))
