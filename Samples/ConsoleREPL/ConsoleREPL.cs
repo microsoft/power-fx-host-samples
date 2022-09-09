@@ -28,6 +28,8 @@ namespace PowerFxHostSamples
 
         public static void Main()
         {
+            Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
+
             ResetEngine();
 
             var version = typeof(RecalcEngine).Assembly.GetName().Version.ToString();
