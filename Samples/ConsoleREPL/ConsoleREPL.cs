@@ -15,21 +15,29 @@ namespace PowerFxHostSamples
     class ConsoleRepl
     {
         private static RecalcEngine engine;
+        private static bool FormatTable = true;
 
         static void ResetEngine()
-        {                        
-            var config = new PowerFxConfig();
+        {
+            Features toenable = 0;
+            foreach (Features feature in (Features[])Enum.GetValues(typeof(Features)))
+                toenable |= feature;
+
+            var config = new PowerFxConfig( toenable );
+
             config.AddFunction(new HelpFunction());
             config.AddFunction(new ResetFunction());
             config.AddFunction(new ExitFunction());
+            config.AddFunction(new OptionFunction());
 
-            engine = new RecalcEngine(config);            
+            engine = new RecalcEngine(config);   
         }
 
         public static void Main()
         {
             var expr = "";
             var exprPartial = "";
+            var enabled = "";
 
             Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
 
@@ -37,6 +45,12 @@ namespace PowerFxHostSamples
 
             var version = typeof(RecalcEngine).Assembly.GetName().Version.ToString();
             Console.WriteLine($"Microsoft Power Fx Console Formula REPL, Version {version}");
+
+            foreach (Features feature in (Features[])Enum.GetValues(typeof(Features)))
+                if ((engine.Config.Features & feature) == feature && feature != Features.None)
+                    enabled += " " + feature.ToString();
+            Console.WriteLine($"Experimental features enabled:{(enabled == "" ? " <none>" : enabled)}");
+
             Console.WriteLine($"Enter Excel formulas.  Use \"Help()\" for details.");
             
             // loop
@@ -75,8 +89,9 @@ namespace PowerFxHostSamples
                     else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$")).Success)
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
 
-                    // function definition: <ident>
-                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*=>.*$"))
+                    // function definition: <ident>( <ident> : <type>, ... ) : <type> = <formula>
+                    //                      <ident>( <ident> : <type>, ... ) : <type> { <formula>; <formula>; ... }
+                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*(\=|\{).*$"))
                     {
                         var res = engine.DefineFunctions(expr);
                         if( res.Errors.Count() > 0 )
@@ -106,82 +121,120 @@ namespace PowerFxHostSamples
         static void OnUpdate(string name, FormulaValue newValue)
         {
             Console.Write($"{name}: ");
-            if( newValue is ErrorValue errorValue)
+            if (newValue is ErrorValue errorValue)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error: " + errorValue.Errors[0].Message);
                 Console.ResetColor();
             }
             else
-                Console.WriteLine( PrintResult(newValue) );
+            {
+                if (newValue is TableValue)
+                    Console.WriteLine("");
+                Console.WriteLine(PrintResult(newValue));
+            }
         }
 
-        static string PrintResult(object value)
+        static string PrintResult(object value, Boolean minimal = false)
         {
             string resultString = "";
 
             if(value is BlankValue)
-                resultString = "Blank()";
+                resultString = (minimal ? "" : "Blank()");
+            else if (value is ErrorValue errorValue)
+                resultString = (minimal ? "<error>" : "<Error: " + errorValue.Errors[0].Message + ">");
+            else if (value is UntypedObjectValue)
+                resultString = (minimal ? "<untyped>" : "<Untyped: Use Value, Text, Boolean, or other functions to establish the type>");
+            else if (value is StringValue str)
+                resultString = (minimal ? str.ToObject().ToString() : "\"" + str.ToObject().ToString().Replace("\"", "\"\"") + "\"");
             else if (value is RecordValue record)
             {
-                var separator = "";
-                resultString = "{";
-                foreach (var field in record.Fields)
+                if (minimal)
+                    resultString = "<record>";
+                else
                 {
-                    resultString += separator + $"{field.Name}:";
-                    resultString += PrintResult(field.Value);
-                    separator = ", ";
+                    var separator = "";
+                    resultString = "{";
+                    foreach (var field in record.Fields)
+                    {
+                        resultString += separator + $"{field.Name}:";
+                        resultString += PrintResult(field.Value);
+                        separator = ", ";
+                    }
+                    resultString += "}";
                 }
-                resultString += "}";
             }
             else if (value is TableValue table)
             {
-                int valueSeen = 0, recordsSeen = 0;
-                string separator = "";
-
-                // check if the table can be represented in simpler [ ] notation,
-                //   where each element is a record with a field named Value.
-                foreach (var row in table.Rows)
-                {
-                    recordsSeen++;
-                    if (row.Value is RecordValue scanRecord)
-                    {
-                        foreach (var field in scanRecord.Fields)
-                            if (field.Name == "Value")
-                            {
-                                valueSeen++;
-                                resultString += separator + PrintResult(field.Value);
-                                separator = ", ";
-                            }
-                            else
-                                valueSeen = 0;
-                    }
-                    else
-                        valueSeen = 0;
-                }
-
-                if (valueSeen == recordsSeen)
-                    return ("[" + resultString + "]");
+                if (minimal)
+                    resultString = "<table>";
                 else
                 {
-                    // no, table is more complex that a single column of Value fields,
-                    //   requires full treatment
-                    resultString = "Table(";
-                    separator = "";
+                    int[] columnWidth = new int[table.Rows.First().Value.Fields.Count()];
+
                     foreach (var row in table.Rows)
                     {
-                        resultString += separator + PrintResult(row.Value);
-                        separator = ", ";
+                        var column = 0;
+                        foreach (var field in row.Value.Fields)
+                        { 
+                            columnWidth[column] = Math.Max(columnWidth[column], PrintResult(field.Value, true).Length);
+                            column++;
+                        }
                     }
-                    resultString += ")";
+
+                    // special treatment for single column table named Value
+                    if (columnWidth.Length == 1 && table.Rows.First().Value.Fields.First().Name == "Value" ) 
+                    {
+                        string separator = "";
+                        resultString = "[";
+                        foreach (var row in table.Rows)
+                        { 
+                            resultString += separator + PrintResult(row.Value.Fields.First().Value);
+                            separator = ", ";
+                        }
+                        resultString += "]";
+                    }
+                    // otherwise a full table treatment is needed
+                    else if( FormatTable )
+                    {
+                        resultString = "\n ";
+                        var column = 0;
+                        foreach (var field in table.Rows.First().Value.Fields)
+                        {
+                            columnWidth[column] = Math.Max(columnWidth[column], field.Name.Length);
+                            resultString += " " + field.Name.PadLeft(columnWidth[column]) + "  ";
+                            column++;
+                        }
+                        resultString += "\n ";
+                        foreach (var width in columnWidth)
+                            resultString += new string('=', width+2) + " ";
+
+                        foreach (var row in table.Rows)
+                        {
+                            column = 0;
+                            resultString += "\n ";
+                            foreach (var field in row.Value.Fields)
+                            {
+                                resultString += " " + PrintResult(field.Value, true).PadLeft(columnWidth[column]) + "  ";
+                                column++;
+                            }
+                        }
+                    }
+                    // table without formatting 
+                    else
+                    {
+                        resultString = "[";
+                        string separator = "";
+                        foreach (var row in table.Rows)
+                        {
+                            resultString += separator + PrintResult(row.Value);
+                            separator = ", ";
+                        }
+                        resultString += "]";
+                    }
                 }
             }
-            else if (value is ErrorValue errorValue)
-                resultString = "<Error: " + errorValue.Errors[0].Message + ">";
-            else if (value is UntypedObjectValue)
-                resultString = "<Untyped: Use Value, Text, Boolean, and other functions to establish the type.>";            
-            else if (value is StringValue str)
-                resultString = "\"" + str.ToObject().ToString().Replace("\"","\"\"") + "\"";
+            // must come last, as everything is a formula value
             else if (value is FormulaValue fv)
                 resultString = fv.ToObject().ToString();
             else
@@ -192,8 +245,6 @@ namespace PowerFxHostSamples
 
         private class ResetFunction : ReflectionFunction
         {
-            public ResetFunction() : base("Reset", FormulaType.Boolean) { }
-
             public BooleanValue Execute()
             {
                 ResetEngine();
@@ -203,8 +254,6 @@ namespace PowerFxHostSamples
 
         private class ExitFunction : ReflectionFunction
         {
-            public ExitFunction() : base("Exit", FormulaType.Boolean) { }
-
             public BooleanValue Execute()
             {
                 System.Environment.Exit(0);
@@ -212,9 +261,22 @@ namespace PowerFxHostSamples
             }
         }
 
+        private class OptionFunction : ReflectionFunction
+        {
+            public BooleanValue Execute(StringValue setting, BooleanValue value)
+            {
+                if (setting.Value.ToString().ToLower() == "formattable")
+                {
+                    FormatTable = value.Value;
+                    return value;
+                }
+                return FormulaValue.New(false);
+            }
+        }
+
         private class HelpFunction : ReflectionFunction
         {
-            public HelpFunction() : base("Help", FormulaType.Boolean) { }
+//            public HelpFunction() : base("Help", FormulaType.Boolean) { }
 
             public BooleanValue Execute()
             {
@@ -233,9 +295,24 @@ namespace PowerFxHostSamples
                 // Just write to console 
                 Console.WriteLine(
                 @"
-Set( <identifier>, <expression> ) creates or changes a variable's value.
-<identifier> = <expression> defines a formula with automatic recalc.
-<expression> alone is evaluated and the result displayed.
+<formula> alone is evaluated and the result displayed.
+    Example: 1+1 or ""Hello, World""
+Set( <identifier>, <formula> ) creates or changes a variable's value.
+    Example: Set( x, x+1 )
+
+<identifier> = <formula> defines a named formula with automatic recalc.
+    Example: F = m * a
+<identifier>( <param> : <type>, ... ) : <type> = <formula> 
+        extends a named formula with parameters, creating a function.
+    Example: F( m: Number, a: Number ): Number = m * a
+<identifier>( <param> : <type>, ... ) : <type> { 
+       <expression>; <expression>; ...
+       }  defines a block function with chained formulas.
+    Example: Log( message: String ): None { 
+                    Collect( LogTable, message );
+                    Notify( message );
+             }
+Supported types: Number, String, Boolean, DateTime, Date, Time
 
 Available functions (all are case sensitive):
 " + funcList + @"
@@ -251,7 +328,7 @@ Use [ <value>, ... ] for a single column table, field name is ""Value"".
 Records and Tables can be arbitrarily nested.
 
 Once a formula is defined or a variable's type is defined, it cannot be changed.
-    Use the Reset() function to clear all formulas and variables.
+Use the Reset() function to clear all formulas and variables.
 "
                 );
                 return FormulaValue.New(true);
