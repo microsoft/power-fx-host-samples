@@ -7,8 +7,10 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using Microsoft.PowerFx;
 using Microsoft.PowerFx.Types;
+using Microsoft.PowerFx.Core;
 
 namespace PowerFxHostSamples
 {
@@ -16,6 +18,7 @@ namespace PowerFxHostSamples
     {
         private static RecalcEngine engine;
         private static bool FormatTable = true;
+        private const string OptionFormatTable = "FormatTable";
 
         static void ResetEngine()
         {
@@ -29,6 +32,13 @@ namespace PowerFxHostSamples
             config.AddFunction(new ResetFunction());
             config.AddFunction(new ExitFunction());
             config.AddFunction(new OptionFunction());
+
+            var OptionsSet = new OptionSet("Options", DisplayNameUtility.MakeUnique(new Dictionary<string, string>()
+            {
+                    { OptionFormatTable, OptionFormatTable },
+            }));
+
+            config.AddOptionSet(OptionsSet);
 
             engine = new RecalcEngine(config);   
         }
@@ -260,12 +270,12 @@ namespace PowerFxHostSamples
                 return FormulaValue.New(true);
             }
         }
-
+        
         private class OptionFunction : ReflectionFunction
         {
-            public BooleanValue Execute(StringValue setting, BooleanValue value)
+            public BooleanValue Execute(StringValue option, BooleanValue value)
             {
-                if (setting.Value.ToString().ToLower() == "formattable")
+                if (option.Value.ToString().ToLower() == OptionFormatTable.ToLower() )
                 {
                     FormatTable = value.Value;
                     return value;
@@ -273,11 +283,9 @@ namespace PowerFxHostSamples
                 return FormulaValue.New(false);
             }
         }
-
+        
         private class HelpFunction : ReflectionFunction
         {
-//            public HelpFunction() : base("Help", FormulaType.Boolean) { }
-
             public BooleanValue Execute()
             {
                 int column = 0;
