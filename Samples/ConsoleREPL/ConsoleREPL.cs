@@ -34,9 +34,10 @@ namespace PowerFxHostSamples
             config.AddFunction(new OptionFunction());
 
             var OptionsSet = new OptionSet("Options", DisplayNameUtility.MakeUnique(new Dictionary<string, string>()
-            {
-                    { OptionFormatTable, OptionFormatTable },
-            }));
+                                                {
+                                                        { OptionFormatTable, OptionFormatTable },
+                                                }
+                                           ));
 
             config.AddOptionSet(OptionsSet);
 
@@ -273,14 +274,26 @@ namespace PowerFxHostSamples
         
         private class OptionFunction : ReflectionFunction
         {
-            public BooleanValue Execute(StringValue option, BooleanValue value)
+            // explicit constructor needed so that the return type from Execute can be FormulaValue and acoomodate both booleans and errors
+            public OptionFunction() : base("Option", FormulaType.Boolean, new [] { FormulaType.String, FormulaType.Boolean } ) { }
+
+            public FormulaValue Execute(StringValue option, BooleanValue value)
             {
-                if (option.Value.ToString().ToLower() == OptionFormatTable.ToLower() )
+                if (option.Value.ToLower() == OptionFormatTable.ToLower())
                 {
                     FormatTable = value.Value;
                     return value;
                 }
-                return FormulaValue.New(false);
+                else
+                {
+                    return FormulaValue.NewError(new ExpressionError()
+                        {
+                            Kind = ErrorKind.InvalidArgument,
+                            Severity = ErrorSeverity.Critical,
+                            Message = $"Invalid option name: {option.Value}."
+                        }
+                    );
+                }
             }
         }
         
@@ -291,6 +304,7 @@ namespace PowerFxHostSamples
                 int column = 0;
                 string funcList = "";
                 var funcNames = engine.Config.FunctionInfos.Select(x => x.Name).Distinct();
+
                 foreach (string func in funcNames)
                 {
                     funcList += $"  {func,-14}";
@@ -316,7 +330,8 @@ Set( <identifier>, <formula> ) creates or changes a variable's value.
 <identifier>( <param> : <type>, ... ) : <type> { 
        <expression>; <expression>; ...
        }  defines a block function with chained formulas.
-    Example: Log( message: String ): None { 
+    Example: Log( message: String ): None 
+             { 
                     Collect( LogTable, message );
                     Notify( message );
              }
@@ -332,8 +347,10 @@ Record syntax is { < field >: < value >, ... } without quoted field names.
 Use the Table function for a list of records.  
     Example: Table( { Name: ""Joe"" }, { Name: ""Sally"" } )
 Use [ <value>, ... ] for a single column table, field name is ""Value"".
-    Examples: [ 1, 2, 3 ] 
+    Example: [ 1, 2, 3 ] 
 Records and Tables can be arbitrarily nested.
+
+Use Option( Options.FormatTable, false ) to disable table formatting.
 
 Once a formula is defined or a variable's type is defined, it cannot be changed.
 Use the Reset() function to clear all formulas and variables.
