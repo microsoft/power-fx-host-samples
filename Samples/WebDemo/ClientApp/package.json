@@ -28,7 +28,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "monaco-editor-webpack-plugin": "4.0.0",
     "nan": "^2.15.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.1",
     "typescript": "^3.9.10"
   },
   "eslintConfig": {
