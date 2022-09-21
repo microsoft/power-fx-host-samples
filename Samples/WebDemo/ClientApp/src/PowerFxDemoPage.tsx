@@ -10,11 +10,14 @@ import { IDisposable, MessageProcessor, PowerFxFormulaEditor } from '@microsoft/
 import { sendDataAsync } from './Helper';
 import { PowerFxLanguageClient } from './PowerFxLanguageClient';
 import { FetchData } from './components/FetchData';
+import { Tabs } from './components/Tabs/Tabs';
 
 interface PowerFxDemoPageState {
   context: string;    // additional symbols passed in as a json object. 
   expression: string; // the user's Power Fx expression to be evaluated 
   evaluation: string; // the string-ified result of the evaluation. 
+  tokens: [];
+  parse: string;
   hasErrors: boolean;
 }
 
@@ -47,6 +50,8 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
       context: JSON.stringify({ "A": "ABC", "B": { "Inner": 123 } }),
       expression: '',
       evaluation: '',
+      tokens: [],
+      parse: '',
       hasErrors: false
     };
   }
@@ -87,14 +92,7 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
           }}
         />
 
-        <h3>Evaluation Result</h3>
-        <textarea style={{
-          width: 'calc(100% - 6px)',
-          height: 100,
-          border: "1px solid grey"
-        }}
-          value={evaluation}
-          readOnly={true} />
+        <Tabs expression={this.state.expression} evaluation={this.state.evaluation} tokens={this.state.tokens} parse={this.state.parse}/>
 
         <FetchData />
       </div>
@@ -113,11 +111,11 @@ export default class PowerFxDemoPage extends React.Component<{}, PowerFxDemoPage
 
     const response = await result.json();
     if (response.result) {
-      this.setState({ evaluation: response.result, hasErrors: false });
+      this.setState({ evaluation: response.result, tokens: response.tokens, parse: response.parse, hasErrors: false });
     } else if (response.error) {
-      this.setState({ evaluation: response.error, hasErrors: true });
+      this.setState({ evaluation: response.error, tokens: response.tokens, parse: response.parse,hasErrors: true });
     } else {
-      this.setState({ evaluation: '', hasErrors: false });
+      this.setState({ evaluation: '', tokens: [], parse:'', hasErrors: false });
     }
   };
 }
