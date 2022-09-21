@@ -16,7 +16,9 @@ namespace WebDemo.Commons
             {
                 "IsValid",
                 "Namespace",
-                "Count"
+                "Count",
+                "Parent",
+                "Span"
             };
         }
 

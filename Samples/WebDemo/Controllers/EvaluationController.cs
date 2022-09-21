@@ -41,10 +41,7 @@ namespace PowerFxService.Controllers
                     new NodeConverter<ListNode>(),
                     new NodeConverter<CallNode>(),
                     new NodeConverter<Identifier>(),
-                    new NodeConverter<DName>(),
-
-                    // Remove?
-                    new TexlNodeConverter()
+                    new NodeConverter<DName>()
 
                 }
             };
