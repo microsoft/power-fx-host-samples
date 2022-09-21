@@ -52,7 +52,8 @@ namespace PowerFxService.Controllers
                 }
                 var check = engine.Check(body.expression, parameters.Type, options:null);
                 check.ThrowOnErrors();
-                var result = await check.Expression.EvalAsync(parameters, cts.Token);
+                var eval = check.GetEvaluator();                
+                var result = await eval.EvalAsync(cts.Token, parameters);
                 var resultString = PowerFxHelper.TestToString(result);
 
                 return StatusCode(200, new { result = resultString });

@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerFx.Core" Version="0.2.2-preview" />
-    <PackageReference Include="Microsoft.PowerFx.Interpreter" Version="0.2.2-preview" />
-    <PackageReference Include="Microsoft.PowerFx.LanguageServerProtocol" Version="0.2.2-preview" />
+    <PackageReference Include="Microsoft.PowerFx.Core" Version="0.2.3-preview" />
+    <PackageReference Include="Microsoft.PowerFx.Interpreter" Version="0.2.3-preview" />
+    <PackageReference Include="Microsoft.PowerFx.LanguageServerProtocol" Version="0.2.3-preview" />
   </ItemGroup>
 
   <ItemGroup>

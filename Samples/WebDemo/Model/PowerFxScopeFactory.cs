@@ -5,6 +5,7 @@ using Microsoft.PowerFx;
 using Microsoft.PowerFx.Core;
 using Microsoft.PowerFx.Core.Public;
 using Microsoft.PowerFx.Intellisense;
+using Microsoft.PowerFx.Types;
 using System;
 using System.Web;
 
@@ -23,11 +24,16 @@ namespace PowerFxService.Model
         }
 
         // A scope wraps the engine and provides parameters used for intellisense.
-        public RecalcEngineScope GetScope(string contextJson)
+        public EditorContextScope GetScope(string contextJson)
         {
             var engine = GetEngine();
 
-            return RecalcEngineScope.FromJson(engine, contextJson);
+            ParserOptions opts = new ParserOptions();
+            var record = (RecordValue) FormulaValue.FromJson(contextJson);
+            var symbols = ReadOnlySymbolTable.NewFromRecord(record.Type);
+
+            var scope = engine.CreateEditorScope(opts, symbols);
+            return scope;
         }
 
         // Uri is passed in from the front-end and specifies which formula bar. 
