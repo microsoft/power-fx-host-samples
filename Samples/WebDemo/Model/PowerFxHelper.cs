@@ -50,7 +50,7 @@ namespace PowerFxService.Model
             else if (result is TableValue t)
             {
                 var tableType = (TableType)t.Type;
-                var canUseSquareBracketSyntax = t.IsColumn && t.Rows.All(r => r.IsValue) && tableType.GetNames().First().Name == "Value";
+                var canUseSquareBracketSyntax = t.IsColumn && t.Rows.All(r => r.IsValue) && tableType.FieldNames.First() == "Value";
                 if (canUseSquareBracketSyntax)
                 {
                     sb.Append('[');

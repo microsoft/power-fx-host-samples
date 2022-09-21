@@ -54,14 +54,14 @@ John,300,220
 **Power Fx:**
 ```
 Diff: = Score2 - Score
-Name: = Name & Diff
+Name2: = Name & Diff
 Total: = PreviousRecord.Total + Score
 RowDiff: = Score - PreviousRecord.Score
 ```
 
 **Output Table** 
 ```
-Name,Score,Score2,Diff,Name,Total,RowDiff
+Name,Score,Score2,Diff,Name2,Total,RowDiff
 Bob,100,150,50,Bob50,100,100
 Fred,200,220,20,Fred20,300,100
 John,300,220,-80,John-80,600,100
