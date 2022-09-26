@@ -11,6 +11,9 @@ using System.Collections.Generic;
 using Microsoft.PowerFx;
 using Microsoft.PowerFx.Types;
 using Microsoft.PowerFx.Core;
+// using System.Security.Cryptography.X509Certificates;
+using System.IO;
+// using Microsoft.VisualBasic.FileIO;
 
 namespace PowerFxHostSamples
 {
@@ -32,6 +35,8 @@ namespace PowerFxHostSamples
             config.AddFunction(new ResetFunction());
             config.AddFunction(new ExitFunction());
             config.AddFunction(new OptionFunction());
+            config.AddFunction(new ResetImportFunction());
+            config.AddFunction(new ImportFunction());
 
             var OptionsSet = new OptionSet("Options", DisplayNameUtility.MakeUnique(new Dictionary<string, string>()
                                                 {
@@ -46,9 +51,7 @@ namespace PowerFxHostSamples
 
         public static void Main()
         {
-            var expr = "";
-            var exprPartial = "";
-            var enabled = "";
+            string enabled = "";
 
             Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
 
@@ -63,33 +66,23 @@ namespace PowerFxHostSamples
             Console.WriteLine($"Experimental features enabled:{(enabled == "" ? " <none>" : enabled)}");
 
             Console.WriteLine($"Enter Excel formulas.  Use \"Help()\" for details.");
-            
-            // loop
-            while (true)
+
+            REPL(Console.In, false);
+        }
+
+        public static void REPL(TextReader input, Boolean echo)
+        {
+            string expr;
+
+            // main loop
+            while ((expr = ReadFormula(input, echo)) != null )
             {
                 Match match;
-
-                // read
-                if( exprPartial == "" )
-                    Console.Write("\n> ");
-
-                var exprOne = Console.ReadLine();
-                if ((match = Regex.Match(expr, @"^(?<code>.*)//.*$")).Success )
-                    exprOne = match.Groups["code"].Value;
-
-                if (!Regex.IsMatch(exprOne, "^\\s*$"))
-                {
-                    exprPartial += " " + exprOne;
-                    if( Regex.Matches(exprPartial, "[\\{\\(\\[]").Count != Regex.Matches(exprPartial, "[\\}\\)\\]]").Count || Regex.IsMatch(exprOne, "(=|=\\>)\\s*$") )
-                        continue;
-                }
-                expr = exprPartial;
-                exprPartial = "";
 
                 try
                 {
                     // variable assignment: Set( <ident>, <expr> )
-                    if ((match = Regex.Match(expr, @"^\s*Set\(\s*(?<ident>\w+)\s*,\s*(?<expr>.*)\)\s*$")).Success)
+                    if ((match = Regex.Match(expr, @"^\s*Set\(\s*(?<ident>\w+)\s*,\s*(?<expr>.*)\)", RegexOptions.Singleline)).Success)
                     {
                         var r = engine.Eval(match.Groups["expr"].Value);
                         Console.WriteLine(match.Groups["ident"].Value + ": " + PrintResult(r));
@@ -97,20 +90,20 @@ namespace PowerFxHostSamples
                     }
 
                     // formula definition: <ident> = <formula>
-                    else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$")).Success)
+                    else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$", RegexOptions.Singleline)).Success)
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
 
                     // function definition: <ident>( <ident> : <type>, ... ) : <type> = <formula>
                     //                      <ident>( <ident> : <type>, ... ) : <type> { <formula>; <formula>; ... }
-                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*(\=|\{).*$"))
+                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*(\=|\{).*$", RegexOptions.Singleline))
                     {
                         var res = engine.DefineFunctions(expr);
                         if( res.Errors.Count() > 0 )
                             throw new Exception("Error: " + res.Errors.First() );
                     }
 
-                    // eval and print everything else, unless empty lines and single line comment (which do nothing)
-                    else if (!Regex.IsMatch(expr, @"^\s*//") && Regex.IsMatch(expr, @"[^\s]"))
+                    // eval and print everything else
+                    else
                     {
                         var result = engine.Eval(expr);
 
@@ -144,6 +137,87 @@ namespace PowerFxHostSamples
                     Console.WriteLine("");
                 Console.WriteLine(PrintResult(newValue));
             }
+        }
+
+        public static string ReadFormula(TextReader input, Boolean echo)
+        {
+            string exprPartial;
+            int usefulCount;
+
+            // read
+            do
+            {
+                string exprOne;
+                int parenCount;
+
+                exprPartial = null;
+
+                do
+                {
+                    bool doubleQuote, singleQuote;
+                    bool lineComment, blockComment;
+                    char last;
+
+                    if (exprPartial == null && !echo)
+                        Console.Write("\n> ");
+
+                    exprOne = input.ReadLine();
+
+                    if (exprOne == null)
+                    {
+                        Console.Write("\n");
+                        return exprPartial;
+                    }
+
+                    exprPartial += exprOne + "\n";
+
+                    // determines if the parens, curly braces, and square brackets are closed
+                    // taking into escaping, block, and line comments
+                    // and continues reading lines if they are not, with a blank link terminating
+                    parenCount = 0;
+                    doubleQuote = singleQuote = lineComment = blockComment = false;
+                    last = '\0';
+                    usefulCount = 0;
+                    foreach (char c in exprPartial)
+                    {
+                        if (c == '"' && !singleQuote)         // don't need to worry about escaping as it looks like two 
+                            doubleQuote = !doubleQuote;       // strings that are back to back
+                        if (c == '\'' && !doubleQuote)
+                            singleQuote = !singleQuote;
+                        if (c == '*' && last == '/' && !blockComment)
+                        {
+                            blockComment = true;
+                            usefulCount--;                         // compensates for the last character already being added
+                        }
+                        if (c == '/' && last == '*' && blockComment)
+                        {
+                            blockComment = false;
+                            usefulCount--;
+                        }
+                        if (!doubleQuote && !singleQuote && !blockComment && !lineComment && c == '/' && last == '/')
+                        {
+                            lineComment = true;
+                            usefulCount--;
+                        }
+                        if (c == '\n') lineComment = false;
+                        if (!lineComment && !blockComment && !doubleQuote && !singleQuote)
+                        {
+                            if (c == '(' || c == '{' || c == '[') parenCount++;
+                            if (c == ')' || c == '}' || c == ']') parenCount--;
+                        }
+                        if (!char.IsWhiteSpace(c) && !lineComment && !blockComment)
+                            usefulCount++;
+                        last = c;
+                    }
+                }
+                while (!Regex.IsMatch(exprOne, "^\\s*$") && (parenCount != 0 || Regex.IsMatch(exprOne, "(=|=\\>)\\s*$")));
+
+                if (echo && !Regex.IsMatch(exprPartial, "^\\s*$"))
+                    Console.Write("\n>> " + exprPartial);
+            }
+            while (usefulCount == 0);
+
+            return exprPartial;
         }
 
         static string PrintResult(object value, Boolean minimal = false)
@@ -296,7 +370,47 @@ namespace PowerFxHostSamples
                 }
             }
         }
-        
+
+        private class ImportFunction : ReflectionFunction
+        {
+            public ImportFunction() : base("Import", FormulaType.Boolean, new[] { FormulaType.String } ) { }
+
+            public FormulaValue Execute(StringValue fileNameSV)
+            {
+                string fileName = fileNameSV.Value;
+                if (File.Exists(fileName))
+                {
+                    TextReader fileReader = new StreamReader(fileName);
+                    ConsoleRepl.REPL(fileReader, true);
+                    fileReader.Close();
+                }
+                else
+                {
+                    return FormulaValue.NewError(new ExpressionError()
+                    {
+                        Kind = ErrorKind.InvalidArgument,
+                        Severity = ErrorSeverity.Critical,
+                        Message = $"File not found: {fileName}."
+                    }
+                    );
+                }
+                return FormulaValue.New(true);
+            }
+        }
+
+        private class ResetImportFunction : ReflectionFunction
+        {
+            public ResetImportFunction() : base("ResetImport", FormulaType.Boolean, new[] { FormulaType.String }) { }
+
+            public FormulaValue Execute(StringValue fileNameSV)
+            {
+                ImportFunction import = new ImportFunction();
+                if (File.Exists(fileNameSV.Value))
+                    ResetEngine();
+                return import.Execute(fileNameSV);
+            }
+        }
+
         private class HelpFunction : ReflectionFunction
         {
             public BooleanValue Execute()
