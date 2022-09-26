@@ -11,9 +11,7 @@ using System.Collections.Generic;
 using Microsoft.PowerFx;
 using Microsoft.PowerFx.Types;
 using Microsoft.PowerFx.Core;
-// using System.Security.Cryptography.X509Certificates;
 using System.IO;
-// using Microsoft.VisualBasic.FileIO;
 
 namespace PowerFxHostSamples
 {
