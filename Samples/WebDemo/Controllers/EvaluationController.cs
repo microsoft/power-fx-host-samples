@@ -94,7 +94,7 @@ namespace PowerFxService.Controllers
                 {
                     error = ex.Message,
                     tokens = tokens,
-                    parse = JsonSerializer.Serialize(check.Parse.Root, _jsonSerializerOptions)
+                    parse = check != null ? JsonSerializer.Serialize(check.Parse.Root, _jsonSerializerOptions) : null
                 });
             }
             finally
