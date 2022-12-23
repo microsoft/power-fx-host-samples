@@ -2,6 +2,10 @@
 
 This sample uses the Power Fx core packages to implement a simple Read-Eval-Print-Loop in a console app.  It supports defining formulas that recalc automatically and creating and modifying variables with the Set function.
 
+This version builds against Power Fx public nugets. 
+For a daily version that builds directly in the Power Fx project, see:  
+https://github.com/microsoft/Power-Fx/blob/main/src/tools/Repl/Program.cs
+
 ## Usage
 
 After building, run ConsoleREPL from the command line.
