@@ -2,25 +2,19 @@
 // Licensed under the MIT License.
 // 
 using Microsoft.PowerFx;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.IO;
 using Microsoft.PowerFx.Types;
+using System.IO;
 
 namespace TransformFx
 {
     partial class Program
     {
         // Given a json record, apply a fx transform to flatten it. 
-        public static void TransformRecord(
-            string inputJsonFile,
-            FxRules rules,
-            TextWriter outputWriter)
+        public static void TransformRecord(string inputJsonFile, FxRules rules, TextWriter outputWriter)
         {
             RecalcEngine engine = new RecalcEngine();
 
-            var input = (RecordValue)FormulaValue.FromJson(File.ReadAllText(inputJsonFile));
+            var input = (RecordValue)FormulaValueJSON.FromJson(File.ReadAllText(inputJsonFile));
 
             outputWriter.WriteLine("Result:");
             foreach (var kv in rules.Rules)

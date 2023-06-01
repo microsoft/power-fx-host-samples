@@ -23,11 +23,9 @@ namespace PowerFxHostSamples
 
         static void ResetEngine()
         {
-            Features toenable = 0;
-            foreach (Features feature in (Features[])Enum.GetValues(typeof(Features)))
-                toenable |= feature;
+            Features toenable = Features.PowerFxV1;
 
-            var config = new PowerFxConfig( toenable );
+            var config = new PowerFxConfig(toenable);
 
             config.AddFunction(new HelpFunction());
             config.AddFunction(new ResetFunction());
@@ -36,33 +34,18 @@ namespace PowerFxHostSamples
             config.AddFunction(new ResetImportFunction());
             config.AddFunction(new ImportFunction());
 
-            var OptionsSet = new OptionSet("Options", DisplayNameUtility.MakeUnique(new Dictionary<string, string>()
-                                                {
-                                                        { OptionFormatTable, OptionFormatTable },
-                                                }
-                                           ));
+            var OptionsSet = new OptionSet("Options", DisplayNameUtility.MakeUnique(new Dictionary<string, string>() { { OptionFormatTable, OptionFormatTable } }));
 
             config.AddOptionSet(OptionsSet);
-
-            engine = new RecalcEngine(config);   
+            engine = new RecalcEngine(config);
         }
 
         public static void Main()
-        {
-            string enabled = "";
-
-            Microsoft.PowerFx.Preview.FeatureFlags.StringInterpolation = true;
-
+        {            
             ResetEngine();
 
             var version = typeof(RecalcEngine).Assembly.GetName().Version.ToString();
-            Console.WriteLine($"Microsoft Power Fx Console Formula REPL, Version {version}");
-
-            foreach (Features feature in (Features[])Enum.GetValues(typeof(Features)))
-                if ((engine.Config.Features & feature) == feature && feature != Features.None)
-                    enabled += " " + feature.ToString();
-            Console.WriteLine($"Experimental features enabled:{(enabled == "" ? " <none>" : enabled)}");
-
+            Console.WriteLine($"Microsoft Power Fx Console Formula REPL, Version {version}");            
             Console.WriteLine($"Enter Excel formulas.  Use \"Help()\" for details.");
 
             REPL(Console.In, false);
@@ -73,7 +56,7 @@ namespace PowerFxHostSamples
             string expr;
 
             // main loop
-            while ((expr = ReadFormula(input, echo)) != null )
+            while ((expr = ReadFormula(input, echo)) != null)
             {
                 Match match;
 
@@ -96,8 +79,8 @@ namespace PowerFxHostSamples
                     else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*(\=|\{).*$", RegexOptions.Singleline))
                     {
                         var res = engine.DefineFunctions(expr);
-                        if( res.Errors.Count() > 0 )
-                            throw new Exception("Error: " + res.Errors.First() );
+                        if (res.Errors.Count() > 0)
+                            throw new Exception("Error: " + res.Errors.First());
                     }
 
                     // eval and print everything else
@@ -222,7 +205,7 @@ namespace PowerFxHostSamples
         {
             string resultString = "";
 
-            if(value is BlankValue)
+            if (value is BlankValue)
                 resultString = (minimal ? "" : "Blank()");
             else if (value is ErrorValue errorValue)
                 resultString = (minimal ? "<error>" : "<Error: " + errorValue.Errors[0].Message + ">");
@@ -259,26 +242,26 @@ namespace PowerFxHostSamples
                     {
                         var column = 0;
                         foreach (var field in row.Value.Fields)
-                        { 
+                        {
                             columnWidth[column] = Math.Max(columnWidth[column], PrintResult(field.Value, true).Length);
                             column++;
                         }
                     }
 
                     // special treatment for single column table named Value
-                    if (columnWidth.Length == 1 && table.Rows.First().Value.Fields.First().Name == "Value" ) 
+                    if (columnWidth.Length == 1 && table.Rows.First().Value.Fields.First().Name == "Value")
                     {
                         string separator = "";
                         resultString = "[";
                         foreach (var row in table.Rows)
-                        { 
+                        {
                             resultString += separator + PrintResult(row.Value.Fields.First().Value);
                             separator = ", ";
                         }
                         resultString += "]";
                     }
                     // otherwise a full table treatment is needed
-                    else if( FormatTable )
+                    else if (FormatTable)
                     {
                         resultString = "\n ";
                         var column = 0;
@@ -290,7 +273,7 @@ namespace PowerFxHostSamples
                         }
                         resultString += "\n ";
                         foreach (var width in columnWidth)
-                            resultString += new string('=', width+2) + " ";
+                            resultString += new string('=', width + 2) + " ";
 
                         foreach (var row in table.Rows)
                         {
@@ -323,7 +306,7 @@ namespace PowerFxHostSamples
             else
                 throw new Exception("unexpected type in PrintResult");
 
-            return(resultString);
+            return (resultString);
         }
 
         private class ResetFunction : ReflectionFunction
@@ -343,11 +326,11 @@ namespace PowerFxHostSamples
                 return FormulaValue.New(true);
             }
         }
-        
+
         private class OptionFunction : ReflectionFunction
         {
             // explicit constructor needed so that the return type from Execute can be FormulaValue and acoomodate both booleans and errors
-            public OptionFunction() : base("Option", FormulaType.Boolean, new [] { FormulaType.String, FormulaType.Boolean } ) { }
+            public OptionFunction() : base("Option", FormulaType.Boolean, new[] { FormulaType.String, FormulaType.Boolean }) { }
 
             public FormulaValue Execute(StringValue option, BooleanValue value)
             {
@@ -359,11 +342,11 @@ namespace PowerFxHostSamples
                 else
                 {
                     return FormulaValue.NewError(new ExpressionError()
-                        {
-                            Kind = ErrorKind.InvalidArgument,
-                            Severity = ErrorSeverity.Critical,
-                            Message = $"Invalid option name: {option.Value}."
-                        }
+                    {
+                        Kind = ErrorKind.InvalidArgument,
+                        Severity = ErrorSeverity.Critical,
+                        Message = $"Invalid option name: {option.Value}."
+                    }
                     );
                 }
             }
@@ -371,7 +354,7 @@ namespace PowerFxHostSamples
 
         private class ImportFunction : ReflectionFunction
         {
-            public ImportFunction() : base("Import", FormulaType.Boolean, new[] { FormulaType.String } ) { }
+            public ImportFunction() : base("Import", FormulaType.Boolean, new[] { FormulaType.String }) { }
 
             public FormulaValue Execute(StringValue fileNameSV)
             {
@@ -424,7 +407,7 @@ namespace PowerFxHostSamples
                         funcList += "\n";
                 }
                 funcList += "  Set";
-                
+
                 // If we return a string, it gets escaped. 
                 // Just write to console 
                 Console.WriteLine(
