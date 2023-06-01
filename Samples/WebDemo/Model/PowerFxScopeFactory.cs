@@ -18,9 +18,7 @@ namespace PowerFxService.Model
         {
             // If the engine requires additional symbols to load, server
             // should find a way to safely cache it. 
-            var engine = new RecalcEngine();
-
-            return engine;
+            return new RecalcEngine(new PowerFxConfig(Features.PowerFxV1));            
         }
 
         // A scope wraps the engine and provides parameters used for intellisense.
@@ -29,7 +27,7 @@ namespace PowerFxService.Model
             var engine = GetEngine();
 
             ParserOptions opts = new ParserOptions();
-            var record = (RecordValue) FormulaValue.FromJson(contextJson);
+            var record = (RecordValue) FormulaValueJSON.FromJson(contextJson);
             var symbols = ReadOnlySymbolTable.NewFromRecord(record.Type);
 
             var scope = engine.CreateEditorScope(opts, symbols);

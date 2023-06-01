@@ -34,7 +34,11 @@ namespace PowerFxService.Model
         // Normalize so we can use this in test cases. 
         internal static void TestToString(FormulaValue result, StringBuilder sb)
         {
-            if (result is NumberValue n)
+            if (result is DecimalValue dec)
+            {
+                sb.Append(dec.Value);
+            }
+            else if (result is NumberValue n)
             {
                 sb.Append(n.Value);
             }

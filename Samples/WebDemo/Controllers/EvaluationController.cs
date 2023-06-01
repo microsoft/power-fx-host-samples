@@ -68,7 +68,7 @@ namespace PowerFxService.Controllers
             {
                 var engine = new PowerFxScopeFactory().GetEngine();
 
-                var parameters = (RecordValue)FormulaValue.FromJson(body.context);
+                var parameters = (RecordValue)FormulaValueJSON.FromJson(body.context);
 
                 if (parameters == null)
                 {
