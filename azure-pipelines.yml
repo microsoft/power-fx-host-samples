@@ -10,7 +10,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/Samples/WebDemo/WebDemo.sln.sln'
+  solution: '**/Samples/WebDemo/WebDemo.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
