@@ -21,6 +21,10 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'install babel-eslint'
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
