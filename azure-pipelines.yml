@@ -24,7 +24,7 @@ steps:
 - task: Npm@1
   inputs:
     command: 'custom'
-    customCommand: 'install babel-eslint@6.14.14'
+    customCommand: 'install babel-eslint@6.1.0'
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
