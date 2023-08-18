@@ -24,7 +24,7 @@ steps:
 - task: Npm@1
   inputs:
     command: 'custom'
-    customCommand: 'install babel-eslint@10.1.0'
+    customCommand: 'install @babel/eslint-parser@^7.5.4'
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
