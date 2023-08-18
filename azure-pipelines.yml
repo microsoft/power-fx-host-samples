@@ -22,6 +22,7 @@ steps:
   displayName: 'Update npm'
 
 - script: |
+    npm install babel-eslint@10.1.0
     npm install @babel/core@^7.11.0
     npm install @babel/eslint-parser@7.22.10
   displayName: 'Install @babel/core and @babel/eslint-parser'
