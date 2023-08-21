@@ -17,10 +17,6 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
 
-# - script: |
-#     npm install -g npm@latest
-#   displayName: 'Update npm'
-
 - script: |
     cd D:\a\1\s\Samples
     ls
@@ -28,7 +24,8 @@ steps:
 
 - task: Npm@1
   inputs:
-    command: 'install'
+    command: 'custom'
+    customCommand: 'install --legacy-peer-deps'
     workingDir: 'D:\a\1\s\Samples\WebDemo\ClientApp'
 
 - task: NuGetCommand@2
