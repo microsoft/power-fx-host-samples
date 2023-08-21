@@ -22,14 +22,14 @@ steps:
 #   displayName: 'Update npm'
 
 - script: |
-    cd D:\a\1\s
+    cd D:\a\1\s\Samples
     ls
   displayName: 'display direc'
 
 - task: Npm@1
   inputs:
     command: 'install'
-    workingDir: 'D:\a\1\s\PowerFxPlayground\src\WebDemo\ClientApp'
+    workingDir: 'D:\a\1\s\Samples\src\WebDemo\ClientApp'
 
 - task: NuGetCommand@2
   inputs:
