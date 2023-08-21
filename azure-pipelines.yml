@@ -21,12 +21,9 @@ steps:
     npm install -g npm@latest
   displayName: 'Update npm'
 
-- script: |
-    npm install eslint@^5.2.0
-    npm install @babel/core@^7.11.0
-    npm install @babel/eslint-parser@7.22.10
-    npm install babel-eslint@10.1.0
-  displayName: 'Install @babel/core and @babel/eslint-parser'
+- task: Npm@1
+  inputs:
+    command: 'install'
 
 - task: NuGetCommand@2
   inputs:
