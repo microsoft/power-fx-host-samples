@@ -21,9 +21,14 @@ steps:
     npm install -g npm@latest
   displayName: 'Update npm'
 
+- script: |
+    ls
+  displayName: 'display direc'
+
 - task: Npm@1
   inputs:
     command: 'install'
+    workingDir: '/ClientApp'
 
 - task: NuGetCommand@2
   inputs:
