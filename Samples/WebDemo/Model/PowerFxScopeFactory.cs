@@ -18,7 +18,9 @@ namespace PowerFxService.Model
         {
             // If the engine requires additional symbols to load, server
             // should find a way to safely cache it. 
-            return new RecalcEngine(new PowerFxConfig(Features.PowerFxV1));            
+            var config = new PowerFxConfig();
+            var engine = new RecalcEngine(config);
+            return engine;
         }
 
         // A scope wraps the engine and provides parameters used for intellisense.
