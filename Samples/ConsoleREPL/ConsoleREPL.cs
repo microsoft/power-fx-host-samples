@@ -74,15 +74,6 @@ namespace PowerFxHostSamples
                     else if ((match = Regex.Match(expr, @"^\s*(?<ident>\w+)\s*=(?<formula>.*)$", RegexOptions.Singleline)).Success)
                         engine.SetFormula(match.Groups["ident"].Value, match.Groups["formula"].Value, OnUpdate);
 
-                    // function definition: <ident>( <ident> : <type>, ... ) : <type> = <formula>
-                    //                      <ident>( <ident> : <type>, ... ) : <type> { <formula>; <formula>; ... }
-                    else if (Regex.IsMatch(expr, @"^\s*\w+\((\s*\w+\s*\:\s*\w+\s*,?)*\)\s*\:\s*\w+\s*(\=|\{).*$", RegexOptions.Singleline))
-                    {
-                        var res = engine.DefineFunctions(expr);
-                        if (res.Errors.Count() > 0)
-                            throw new Exception("Error: " + res.Errors.First());
-                    }
-
                     // eval and print everything else
                     else
                     {
