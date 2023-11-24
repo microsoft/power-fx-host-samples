@@ -32,6 +32,36 @@
     <DebugSymbols>true</DebugSymbols>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.PowerFx.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Core</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerFx.Core.resources, Version=1.1.0.0, Culture=en-US, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Core.resources</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Core.resources.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerFx.Interpreter, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Interpreter</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerFx.Json, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Json</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerFx.Repl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Repl</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Repl.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerFx.Transport.Attributes, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>Microsoft.PowerFx.Transport.Attributes</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\Microsoft.PowerFx.Transport.Attributes.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerFxDemoLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <Name>PowerFxDemoLibrary</Name>
+      <HintPath>C:\Git\power-fx-host-samples\Samples\Dynamics365FODemo\references\PowerFxDemoLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
   <Import Project="$(BuildTasksDirectory)\Microsoft.Dynamics.Framework.Tools.BuildTasks.targets" />
 </Project>
