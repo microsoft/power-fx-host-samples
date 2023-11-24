@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>PowerFxSalesHeaderContract</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[DataContractAttribute]
+class PowerFxSalesHeaderContract
+{
+    str salesNumber;
+    str custName;
+    str custAccount;
+    str deliveryDate;
+    str custGroup;
+    str dlvMode;
+    str markupGroup;
+    str paymMode;
+    str salesGroup;
+    str salesType;
+    str vatNum;
+    PowerFxDeliveryAddressContract deliveryAddress;
+    real amountInvoiced;
+    real amountOrderedNotInvoiced;
+    real amountRemainSalesFinancial;
+    real amountRemainSalesPhysical;
+    real contributionMargin;
+    List salesOrderLines;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>parmSalesNumber</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('SalesNumber')]
+    public str parmSalesNumber(str _SalesNumber = salesNumber)
+    {
+        salesNumber = _SalesNumber;
+        return salesNumber;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustName</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('Name')]
+    public str parmCustName(str _CustName = custName)
+    {
+        custName = _CustName;
+        return custName;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustAccount</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('Account')]
+    public str parmCustAccount(str _CustAccount = custAccount)
+    {
+        custAccount = _CustAccount;
+        return custAccount;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCustGroup</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('CustGroup')]
+    public str parmCustGroup(str _CustGroup = custGroup)
+    {
+        custGroup = _CustGroup;
+        return custGroup;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmVATNum</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('VATNum')]
+    public str parmVATNum(str _VATNum = vatNum)
+    {
+        vatNum = _VATNum;
+        return vatNum;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmMarkupGroup</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('MarkupGroup')]
+    public str parmMarkupGroup(str _MarkupGroup = markupGroup)
+    {
+        markupGroup = _MarkupGroup;
+        return markupGroup;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmDlvMode</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('DlvMode')]
+    public str parmDlvMode(str _DlvMode = dlvMode)
+    {
+        dlvMode = _DlvMode;
+        return dlvMode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmPaymMode</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('PaymMode')]
+    public str parmPaymMode(str _PaymMode = paymMode)
+    {
+        paymMode = _PaymMode;
+        return paymMode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesGroup</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('SalesGroup')]
+    public str parmSalesGroup(str _SalesGroup = salesGroup)
+    {
+        salesGroup = _SalesGroup;
+        return salesGroup;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesType</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('SalesGroup')]
+    public str parmSalesType(str _SalesType = salesType)
+    {
+        salesType = _SalesType;
+        return salesType;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmDeliveryDate</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('DeliveryDate')]
+    public str parmDeliveryDate(str _DeliveryDate = deliveryDate)
+    {
+        deliveryDate = _DeliveryDate;
+        return deliveryDate;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmAmountInvoiced</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('AmountInvoiced')]
+    public real parmAmountInvoiced(real _AmountInvoiced = amountInvoiced)
+    {
+        amountInvoiced = _AmountInvoiced;
+        return amountInvoiced;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmAmountOrderedNotInvoiced</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('AmountOrderedNotInvoiced')]
+    public real parmAmountOrderedNotInvoiced(real _AmountOrderedNotInvoiced = amountOrderedNotInvoiced)
+    {
+        amountOrderedNotInvoiced = _AmountOrderedNotInvoiced;
+        return amountOrderedNotInvoiced;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmAmountRemainSalesFinancial</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('AmountRemainSalesFinancial')]
+    public real parmAmountRemainSalesFinancial(real _AmountRemainSalesFinancial = amountRemainSalesFinancial)
+    {
+        amountRemainSalesFinancial = _AmountRemainSalesFinancial;
+        return amountRemainSalesFinancial;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmAmountRemainSalesPhyscial</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('AmountRemainSalesPhyscial')]
+    public real parmAmountRemainSalesPhyscial(real _AmountRemainSalesPhyscial = amountRemainSalesPhysical)
+    {
+        amountRemainSalesPhysical = _AmountRemainSalesPhyscial;
+        return amountRemainSalesPhysical;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmContributionMargin</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('ContributionMargin')]
+    public real parmContributionMargin(real _ContributionMargin = contributionMargin)
+    {
+        contributionMargin = _ContributionMargin;
+        return contributionMargin;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmDeliveryAddress</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('DeliveryAddress')]
+    public PowerFxDeliveryAddressContract parmDeliveryAddress(PowerFxDeliveryAddressContract _deliveryAddress = deliveryAddress)
+    {
+        deliveryAddress = _deliveryAddress;
+        return deliveryAddress;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesOrderLines</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('Lines'), DataCollectionAttribute(Types::Class, classStr(PowerFxSalesLineContract))]
+    public List parmSalesOrderLines(List _salesOrderLines = salesOrderLines)
+    {
+        salesOrderLines = _salesOrderLines;
+        return salesOrderLines;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getInstance</Name>
+				<Source><![CDATA[
+    public static PowerFxSalesHeaderContract getInstance(SalesTable _salesTable)
+    {
+        PowerFxSalesHeaderContract contract = new PowerFxSalesHeaderContract();
+
+        contract.parmSalesNumber(_salesTable.SalesId);
+        contract.parmCustName(_salesTable.SalesName);
+        contract.parmCustAccount(_salesTable.CustAccount);
+        contract.parmDeliveryDate(date2Str(_salesTable.DeliveryDate, 321, DateDay::Digits2, DateSeparator::Hyphen, DateMonth::Digits2, DateSeparator::Hyphen, DateYear::Digits4));
+        contract.parmCustGroup(_salesTable.CustGroup);
+        contract.parmDlvMode(_salesTable.DlvMode);
+        contract.parmMarkupGroup(_salesTable.MarkupGroup);
+        contract.parmSalesGroup(_salesTable.SalesGroup);
+        contract.parmSalesType(enum2Symbol(enumNum(SalesType), _salesTable.SalesType));
+        contract.parmAmountInvoiced(_salesTable.amountInvoiced());
+        contract.parmAmountOrderedNotInvoiced(_salesTable.amountOrderedNotInvoiced());
+        contract.parmAmountRemainSalesFinancial(_salesTable.amountRemainSalesFinancial());
+        contract.parmAmountRemainSalesPhyscial(_salesTable.amountRemainSalesPhysical());
+        contract.parmContributionMargin(_salesTable.contributionMargin());
+        contract.parmVATNum(_salesTable.VATNum);
+
+        //Delivery Address
+        contract.parmDeliveryAddress(PowerFxDeliveryAddressContract::getInstance(_salesTable.deliveryAddress()));
+
+        List lineList = new List(Types::Class);
+        SalesLine salesLine;
+        while select salesLine where salesLine.SalesId == _salesTable.SalesId {
+            lineList.addEnd(PowerFxSalesLineContract::getInstance(salesLine));
+        }
+
+        contract.parmSalesOrderLines(lineList);
+
+        return contract;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>PowerFxDemoRunnable</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+using PowerFxDemoLibrary;
+
+internal final class PowerFxDemoRunnable
+{
+    Dialog dialog;
+    DialogField contextField, formulaField, evaluationField, errorField;
+
+    Evaluation evaluator = new Evaluation();
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>main</Name>
+				<Source><![CDATA[
+    public static void main(Args _args)
+    {
+        new PowerFxDemoRunnable().run();
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>run</Name>
+				<Source><![CDATA[
+    public void run()
+    {
+        dialog = new Dialog("PowerFX Test");
+        dialog.form().design().dialogSize(DialogSize::Large);
+        dialog.addText("Test the new PowerFx engine");
+
+        contextField = dialog.addField(extendedTypeStr(WebText), "Context");
+        contextField.multiLine(true);
+        contextField.enabled(false);
+
+        formulaField = dialog.addField(extendedTypeStr(WebText), "Formula");
+        formulaField.multiLine(true);
+        evaluationField = dialog.addField(extendedTypeStr(WebText), "Evaluation Result");
+        evaluationField.multiLine(true);
+        errorField = dialog.addField(extendedTypeStr(WebText), "Error");
+        errorField.multiLine(true);
+        errorField.enabled(false);
+
+        formulaField.registerOverrideMethod(methodStr(FormStringControl, modified), methodStr(PowerFxDemoRunnable, modifiedFormula), this);
+        
+        //SALES ORDER TEST
+        PowerFxSalesHeaderContract contract = PowerFxSalesHeaderContract::getInstance(SalesTable::find("000776"));
+
+        contextField.value(FormJsonSerializer::serializeClass(contract));
+        
+
+        dialog.run();
+        if(dialog.closedOk())
+        {
+            Info(evaluationField.value());
+        }
+        
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedFormula</Name>
+				<Source><![CDATA[
+    public boolean modifiedFormula(FormStringControl _control)
+    {
+        Evaluation.Response response = evaluator.EvaluateInput(contextField.value(), formulaField.value());
+
+        if(response.errorThrown == true){
+            //Split string
+            List errorList = new List(Types::String);
+            errorList=strSplit(response.error,'\n');
+            ListIterator iterator = new ListIterator(errorList);
+            while(iterator.more())
+            {
+                if(iterator.value() != "")
+                {
+                    Global::error(iterator.value());
+                }
+                iterator.next();
+            }
+        }
+        evaluationField.value(response.output);
+        errorField.value(response.error);
+        return true;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>

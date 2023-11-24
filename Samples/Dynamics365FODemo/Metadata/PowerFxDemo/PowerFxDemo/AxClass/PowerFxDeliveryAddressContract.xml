@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>PowerFxDeliveryAddressContract</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[DataContractAttribute]
+class PowerFxDeliveryAddressContract
+{
+    str name;
+    str street;
+    str city;
+    str zipCode;
+    str countryCode;
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>parmName</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('AddressName')]
+    public str parmName(str _AddressName = name)
+    {
+        name = _AddressName;
+        return name;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmStreet</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('Street')]
+    public str parmStreet(str _Street = street)
+    {
+        street = _Street;
+        return street;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCity</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('City')]
+    public str parmCity(str _City = city)
+    {
+        city = _City;
+        return city;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmZipCode</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('PostCode')]
+    public str parmZipCode(str _ZipCode = zipCode)
+    {
+        zipCode = _ZipCode;
+        return zipCode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCountryCode</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('ISOCountry')]
+    public str parmCountryCode(str _CountryCode = countryCode)
+    {
+        countryCode = _CountryCode;
+        return countryCode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getInstance</Name>
+				<Source><![CDATA[
+    public static PowerFxDeliveryAddressContract getInstance(LogisticsPostalAddress _postalAddress)
+    {
+        PowerFxDeliveryAddressContract deliveryAddress = new PowerFxDeliveryAddressContract();
+        deliveryAddress.parmName(_postalAddress.Address);
+        deliveryAddress.parmStreet(_postalAddress.Street);
+        deliveryAddress.parmCity(_postalAddress.City);
+        deliveryAddress.parmZipCode(_postalAddress.ZipCode);
+        deliveryAddress.parmCountryCode(_postalAddress.CountryRegionId);
+        return deliveryAddress;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
