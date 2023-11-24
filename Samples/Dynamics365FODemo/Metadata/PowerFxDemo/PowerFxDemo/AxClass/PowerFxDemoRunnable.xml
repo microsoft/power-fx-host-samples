@@ -8,7 +8,7 @@ using PowerFxDemoLibrary;
 internal final class PowerFxDemoRunnable
 {
     Dialog dialog;
-    DialogField contextField, formulaField, evaluationField, errorField;
+    DialogField contextField, formulaField, evaluationField, errorField, salesOrderLookup;
 
     Evaluation evaluator = new Evaluation();
 }
@@ -33,6 +33,8 @@ internal final class PowerFxDemoRunnable
         dialog.form().design().dialogSize(DialogSize::Large);
         dialog.addText("Test the new PowerFx engine");
 
+        salesOrderLookup = dialog.addField(extendedTypeStr(SalesId), "Select sales order context");
+
         contextField = dialog.addField(extendedTypeStr(WebText), "Context");
         contextField.multiLine(true);
         contextField.enabled(false);
@@ -46,19 +48,28 @@ internal final class PowerFxDemoRunnable
         errorField.enabled(false);
 
         formulaField.registerOverrideMethod(methodStr(FormStringControl, modified), methodStr(PowerFxDemoRunnable, modifiedFormula), this);
+        salesOrderLookup.registerOverrideMethod(methodStr(FormStringControl, modified), methodStr(PowerFxDemoRunnable, modifiedSalesOrderSelection), this);
         
-        //SALES ORDER TEST
-        PowerFxSalesHeaderContract contract = PowerFxSalesHeaderContract::getInstance(SalesTable::find("000776"));
-
-        contextField.value(FormJsonSerializer::serializeClass(contract));
-        
-
         dialog.run();
         if(dialog.closedOk())
         {
             Info(evaluationField.value());
         }
         
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>modifiedSalesOrderSelection</Name>
+				<Source><![CDATA[
+    public boolean modifiedSalesOrderSelection(FormStringControl _control)
+    {
+        if(salesOrderLookup.value()){
+            PowerFxSalesHeaderContract contract = PowerFxSalesHeaderContract::getInstance(SalesTable::find(salesOrderLookup.value()));
+            contextField.value(FormJsonSerializer::serializeClass(contract));
+        }
+        return true;
     }
 
 ]]></Source>
