@@ -17,8 +17,12 @@
 		<d2p1:string>ApplicationSuite</d2p1:string>
 		<d2p1:string>ContactPerson</d2p1:string>
 		<d2p1:string>Directory</d2p1:string>
+		<d2p1:string>FiscalBooks</d2p1:string>
+		<d2p1:string>Ledger</d2p1:string>
+		<d2p1:string>Retail</d2p1:string>
 		<d2p1:string>SourceDocumentation</d2p1:string>
 		<d2p1:string>SourceDocumentationTypes</d2p1:string>
+		<d2p1:string>Tax</d2p1:string>
 	</ModuleReferences>
 	<Name>PowerFxDemo</Name>
 	<Publisher>Dominik Downarowicz</Publisher>
