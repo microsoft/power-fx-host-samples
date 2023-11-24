@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <BuildTasksDirectory Condition=" '$(BuildTasksDirectory)' == ''">$(MSBuildProgramFiles32)\MSBuild\Microsoft\Dynamics\AX</BuildTasksDirectory>
     <Model>PowerFxDemo</Model>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <OutputPath>bin</OutputPath>
     <SchemaVersion>2.0</SchemaVersion>
     <GenerateCrossReferences>True</GenerateCrossReferences>
@@ -32,6 +32,28 @@
     <DebugSymbols>true</DebugSymbols>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="AxClass\PowerFxDeliveryAddressContract">
+      <SubType>Content</SubType>
+      <Name>PowerFxDeliveryAddressContract</Name>
+      <Link>PowerFxDeliveryAddressContract</Link>
+    </Content>
+    <Content Include="AxClass\PowerFxDemoRunnable">
+      <SubType>Content</SubType>
+      <Name>PowerFxDemoRunnable</Name>
+      <Link>PowerFxDemoRunnable</Link>
+    </Content>
+    <Content Include="AxClass\PowerFxSalesHeaderContract">
+      <SubType>Content</SubType>
+      <Name>PowerFxSalesHeaderContract</Name>
+      <Link>PowerFxSalesHeaderContract</Link>
+    </Content>
+    <Content Include="AxClass\PowerFxSalesLineContract">
+      <SubType>Content</SubType>
+      <Name>PowerFxSalesLineContract</Name>
+      <Link>PowerFxSalesLineContract</Link>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.PowerFx.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Name>Microsoft.PowerFx.Core</Name>
