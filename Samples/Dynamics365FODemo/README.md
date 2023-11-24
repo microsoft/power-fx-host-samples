@@ -8,7 +8,7 @@ Additionally the custom function **ThrowError("...")** has been added to PowerFx
 # Deploy and demo usage
 In the folder **DeployablePackage** is a ready to deploy package for D365F&O works. Can be deployed like any other package for D365F&O. To run the demo script you then only need to call the **SysClassRunner** in the URL.
 
-**Example: https://<your F&O url>/?cmp=<legal entity>&mi=SysClassRunner&cls=PowerFxDemoRunnable**
+**Example: https://<your F&O url>/?cmp=USMF&mi=SysClassRunner&cls=PowerFxDemoRunnable**
         
 # Build
 If you want to build the project by yourself on a cloud-hosted environment or local VHD image, do not forget to use the registerSymbolicLink.ps1 to link the Metadata folder to the AosService/PackagesLocalDirectory of the machine. You can also build the project on a new [Unified Experience environment](https://learn.microsoft.com/en-us/power-platform/developer/unified-experience/finance-operations-dev-overview). (2023-11-24: Unified experience environments are in preview and some features might not work).
