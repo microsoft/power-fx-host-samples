@@ -95,5 +95,21 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+	<Target Name="CopyReferences" AfterTargets="Build">
+    <Message Text="Copy binaries to reference folder" Importance="High" />
+    <ItemGroup>
+      <Dlls Include="$(OutDir)*.dll" />
+      <Pdbs Include="$(OutDir)*.pdb" />
+      <Xmls Include="$(OutDir)*.xml" />
+      <Configs Include="$(OutDir)*.config" />
+	  <ResourceDlls Include="$(OutDir)\en-US\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(Dlls)" DestinationFolder="$(SolutionDir)\references\" />
+    <Copy SourceFiles="@(Pdbs)" DestinationFolder="$(SolutionDir)\references\" />
+    <Copy SourceFiles="@(Xmls)" DestinationFolder="$(SolutionDir)\references\" />
+    <Copy SourceFiles="@(Configs)" DestinationFolder="$(SolutionDir)\references\" />
+	<Copy SourceFiles="@(ResourceDlls)" DestinationFolder="$(SolutionDir)\references\" />
+	<Message Text="Finished copying references." Importance="High" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
