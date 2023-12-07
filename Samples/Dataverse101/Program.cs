@@ -26,6 +26,10 @@ namespace PowerFxHostSamples
 
             var engine = new RecalcEngine();
 
+            // the below line is optional, but will enable delegation for the specified functions,
+            // so that they are evaluated in Dataverse instead of in the client. And it will fetch max 1000 rows.
+            engine.EnableDelegation(maxRows: 1000);
+
             var result = await engine.EvalAsync(expressionText, default, symbolValues);
 
             var name = ((StringValue)result).Value;
