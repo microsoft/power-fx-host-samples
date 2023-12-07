@@ -1,0 +1,15 @@
+**/.vs
+**/obj
+**/bin/*
+**/Resources
+**/XppMetadata
+**/Reports
+**/references
+
+BuildModelResult.log
+BuildModelResult.xml
+BuildModelResult.err.xml
+BuildProjectResult.log
+BuildProjectResult.xml
+BuildProjectResult.err.xml
+CompileLabels.xml

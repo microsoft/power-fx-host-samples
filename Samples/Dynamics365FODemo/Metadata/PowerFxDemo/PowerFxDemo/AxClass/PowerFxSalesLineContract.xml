@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AxClass xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<Name>PowerFxSalesLineContract</Name>
+	<SourceCode>
+		<Declaration><![CDATA[
+[DataContractAttribute]
+class PowerFxSalesLineContract
+{
+    str itemName;
+    str itemId;
+    real lineNum;
+    real lineAmount;
+    real salesPrice;
+    real discPercent;
+    real qtyOrdered;
+    real salesQty;
+    str unitId;
+    str currencyCode;
+    str deliveryDate;
+
+
+}
+]]></Declaration>
+		<Methods>
+			<Method>
+				<Name>parmItemName</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('ItemName')]
+    public str parmItemName(str _ItemName = itemName)
+    {
+        itemName = _ItemName;
+        return itemName;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmItemId</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('ItemId')]
+    public str parmItemId(str _ItemId = itemId)
+    {
+        itemId = _ItemId;
+        return itemId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmLineNum</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('LineId')]
+    public real parmLineNum(real _LineNum = lineNum)
+    {
+        lineNum = _LineNum;
+        return lineNum;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmLineAmount</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('LineAmount')]
+    public real parmLineAmount(real _LineAmount = lineAmount)
+    {
+        lineAmount = _LineAmount;
+        return lineAmount;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesPrice</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('SalesPrice')]
+    public real parmSalesPrice(real _SalesPrice = salesPrice)
+    {
+        salesPrice = _SalesPrice;
+        return salesPrice;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmDiscPercent</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('DiscPercent')]
+    public real parmDiscPercent(real _DiscPercent = discPercent)
+    {
+        discPercent = _DiscPercent;
+        return discPercent;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmQtyOrdered</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('QtyOrdered')]
+    public real parmQtyOrdered(real _Qty = qtyOrdered)
+    {
+        qtyOrdered = _Qty;
+        return qtyOrdered;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmSalesQty</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('SalesQty')]
+    public real parmSalesQty(real _Qty = salesQty)
+    {
+        salesQty = _Qty;
+        return salesQty;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmUnitId</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('UnitId')]
+    public str parmUnitId(str _UnitId = unitId)
+    {
+        unitId = _UnitId;
+        return unitId;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmCurrencyCode</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('CurrencyISO')]
+    public str parmCurrencyCode(str _CurrencyCode = currencyCode)
+    {
+        currencyCode = _CurrencyCode;
+        return currencyCode;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>parmDeliveryDate</Name>
+				<Source><![CDATA[
+    [DataMemberAttribute('DeliveryDate')]
+    public str parmDeliveryDate(str _DeliveryDate = deliveryDate)
+    {
+        deliveryDate = _DeliveryDate;
+        return deliveryDate;
+    }
+
+]]></Source>
+			</Method>
+			<Method>
+				<Name>getInstance</Name>
+				<Source><![CDATA[
+    public static PowerFxSalesLineContract getInstance(SalesLine _salesLine)
+    {
+        PowerFxSalesLineContract contract = new PowerFxSalesLineContract();
+
+        contract.parmItemName(_salesLine.itemName());
+        contract.parmItemId(_salesLine.ItemId);
+        contract.parmLineNum(_salesLine.LineNum);
+        contract.parmLineAmount(_salesLine.LineAmount);
+        contract.parmSalesPrice(_salesLine.SalesPrice);
+        contract.parmQtyOrdered(_salesLine.QtyOrdered);
+        contract.parmSalesQty(_salesLine.SalesQty);
+        contract.parmDiscPercent(_salesLine.discPercent());
+        contract.parmUnitId(_salesLine.SalesUnit);
+        contract.parmCurrencyCode(_salesLine.CurrencyCode);
+        contract.parmDeliveryDate(date2Str(_salesLine.deliveryDate(), 321, DateDay::Digits2, DateSeparator::Hyphen, DateMonth::Digits2, DateSeparator::Hyphen, DateYear::Digits4));
+
+        return contract;
+    }
+
+]]></Source>
+			</Method>
+		</Methods>
+	</SourceCode>
+</AxClass>
