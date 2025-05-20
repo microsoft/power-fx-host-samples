@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
     <PackageReference Include="Microsoft.PowerFx.Core" Version="1.3.1" />
     <PackageReference Include="Microsoft.PowerFx.Interpreter" Version="1.3.1" />
+    <PackageReference Include="Microsoft.PowerFx.Json" Version="1.3.1" />
     <PackageReference Include="Microsoft.PowerFx.Repl" Version="1.3.1" />
     <PackageReference Include="ModelContextProtocol" Version="0.2.0-preview.1" />
   </ItemGroup>
